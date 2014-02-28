@@ -6,16 +6,27 @@
     <script src="lib/angular/angular.js"></script>
 </head>
 <body>
-<div ng-controller="Main">
-   {{2 + 2}}
-   {{message}} 
+
+<img ng-src="img/Face_Neutral_1.jpg"></img>
+
+
+<div ng-controller="StudentsCtrl">
+
+   <h2>Total Students: {{getNumStudents()}}</h2>
+   <li ng-repeat="student in students">
+      <img ng-src="img/Face_Neutral_3.jpg"></img>
+      {{student.name}}
+   </li>
 </div>
-<img ng-src="img/Face_Trouble_1.jpg"></img>
 
 
  <button ng-click="count = count + 1" ng-init="count=0">
    Increment
  </button>
  count: {{count}}
+
+
+
+
 </body>
 </html>
