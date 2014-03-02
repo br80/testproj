@@ -1,38 +1,38 @@
-<!doctype html>
-<html ng-app>
-<head>
-    <title>First Angular Page</title>
-    <script type="text/javascript" src="main.js"></script>
-    <script src="lib/angular/angular.js"></script>
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="utf-8">
+  <title>SimEdu</title>
+  <link rel="stylesheet" href="vendor/foundation/foundation.min.css">
+  <script type="text/javascript" src="lib/angular/angular.js"></script>
+  <script type="text/javascript" src="main.js"></script>
 </head>
 <body>
 
+  <div ng-app="myApp">
+    
+   <div ng-controller="ClassroomCtrl">
 
+   <!--Name of the class-->
+   <h2>{{game.name}}'s Class</h2>
+   
+   <!--Display the time-->
+   Day {{getDay()}} ({{getTime()}})
 
-<div ng-controller="StudentsCtrl">
-
-   <h2>Total Students: {{getNumStudents()}}</h2>
-   {{setCounter(0)}}
+   <!--Make action button-->
+   <button ng-click="takeTurn()">Take Turn {{turnActive}}</button>
+   
+   <!--Make table containing student portraits-->
    <table style="width:300px">
    <tr>
    <td ng-repeat="student in students">
-      <img ng-src="img/Face_Neutral_{{RandomRange(1,3)}}.jpg"></img>
-      {{student.name}}
-      {{getCounter()}}
-      {{incrementCounter(1)}}
-      {{getCounter()}}
-   </td>
-   </tr>
-</div>
-
-
- <button ng-click="count = count + 1" ng-init="count=0">
-   Increment
- </button>
- count: {{count}}
-
-
-
+         <img ng-src="img/Face_Neutral_{{RandomRange(1,3)}}.jpg" title="{{student.name}}"></img>
+         {{student.name}}
+      </td>
+      </tr>
+   </div>
+  </div>
 
 </body>
 </html>
+

@@ -1,57 +1,107 @@
+var app = angular.module("myApp", []);
+
+app.directive("superman", function() {
+    return {
+        restrict: "E",
+        template: "<div>Here I am to save the day</div>"
+    }
+})
+
+
 function Main($scope)
 {
     $scope.message = "Hello!"
 
 }
 
+app.directive('tooltip', function () {
+    return {
+        restrict:'AEC',
+        link: function(scope, element, attrs)
+        {
+            $(element)
+                .attr('title',scope.$eval(attrs.tooltip))
+                .tooltip({placement: "right"});
+        }
+    }
+})
 
 
-function StudentsCtrl($scope)
+$scope.clear = function () {
+    $scope.dt = null;
+};
+
+
+function ClassroomCtrl($scope,$timeout)
 {
+	// Dictionary with game and player variables
+	$scope.game = {
+		"turn":0,
+		"name":"Brady"	
+	}
+	
+	// Array with students
 	$scope.students = [
         {
-                "name":"Eric"
+                "name":"Riley"
         },
         {
-                "name":"David"
+                "name":"Kelly"
         },
         {
-                "name":"Karen"
+                "name":"Alex"
         },
         {
-                "name":"Ashley"
+                "name":"Taylor"
         },
         {
-                "name":"Josh"
+                "name":"Morgan"
         },
         {
-                "name":"Angelina"
+                "name":"Jesse"
         }
 	];
 	
-	// COUNTER FUNCTIONS
-	$scope.setCounter = function(num)
+
+	// Game Time functions
+	$scope.getTime = function()
 	{
-		$scope.counter = num;
+		if ($scope.game["turn"] % 2 == 0)
+		{
+			return "Morning";
+		}
+		else
+		{
+			return "Afternoon";
+		}
 	}
-	$scope.getCounter = function()
+	$scope.getDay = function()
 	{
-		return $scope.counter;
-	}
-	$scope.incrementCounter = function(amt)
-	{
-		$scope.counter += amt;
-		return $scope.counter;
+		return Math.floor($scope.game["turn"] / 2 + 1);
 	}
 
-	$scope.getNumStudents = function ()
+
+	// Action functions
+	$scope.turnActive = false;  // This is true when a turn is taking place
+	$scope.takeTurn = function()
 	{
-		return $scope.students.length;
+		$scope.game["turn"]++;
+		$scope.turnActive = true;
+		$timeout($scope.onActionFinished,1000);	
+	}
+	$scope.onActionFinished = function()
+	{
+		$scope.turnActive = false;
 	}
 	
+
+	
+
+
+
+	// Util Functions
 	$scope.RandomRange = function(num1, num2)
 	{
 		return Math.floor(Math.random() * num2) + num1;
 	}
 }
-
