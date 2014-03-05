@@ -7,7 +7,6 @@ app.directive("superman", function() {
     }
 })
 
-
 function Main($scope)
 {
     $scope.message = "Hello!"
