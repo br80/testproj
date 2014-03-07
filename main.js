@@ -1,37 +1,8 @@
 var app = angular.module("myApp", []);
 
-app.directive("superman", function() {
-    return {
-        restrict: "E",
-        template: "<div>Here I am to save the day</div>"
-    }
-})
-
-function Main($scope)
-{
-    $scope.message = "Hello!"
-
-}
-
-app.directive('tooltip', function () {
-    return {
-        restrict:'AEC',
-        link: function(scope, element, attrs)
-        {
-            $(element)
-                .attr('title',scope.$eval(attrs.tooltip))
-                .tooltip({placement: "right"});
-        }
-    }
-})
 
 
-$scope.clear = function () {
-    $scope.dt = null;
-};
-
-
-function ClassroomCtrl($scope,$timeout)
+app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 {
 	// Dictionary with game and player variables
 	$scope.game = {
@@ -42,24 +13,74 @@ function ClassroomCtrl($scope,$timeout)
 	// Array with students
 	$scope.students = [
         {
-                "name":"Riley"
+                "name":"Riley",
+                "math":1,
+                "reading":1,
+                "writing":1,
+                "discipline":1
         },
         {
-                "name":"Kelly"
+                "name":"Kelly",
+                "math":1,
+                "reading":1,
+                "writing":1,
+                "discipline":1
         },
         {
-                "name":"Alex"
+                "name":"Alex",
+                "math":1,
+                "reading":1,
+                "writing":1,
+                "discipline":1
         },
         {
-                "name":"Taylor"
+                "name":"Taylor",
+                "math":1,
+                "reading":1,
+                "writing":1,
+                "discipline":1
         },
         {
-                "name":"Morgan"
+                "name":"Morgan",
+                "math":1,
+                "reading":1,
+                "writing":1,
+                "discipline":1
         },
         {
-                "name":"Jesse"
+                "name":"Jesse",
+                "math":1,
+                "reading":1,
+                "writing":1,
+                "discipline":1
         }
 	];
+	
+	// Function to return a student entry in the array.
+	$scope.getStudent = function(studentName)
+	{
+		retString = ""
+		for (var i = 0 ; i < $scope.students.length ; i++)
+		{
+			if ($scope.students[i]["name"] == studentName)
+				return $scope.students[i];
+			else
+				retString += $scope.students[i]["name"];
+		}
+		return retString;
+	}
+	
+	// Generate tooltip text (shows stats)
+	$scope.studentTooltip = function(studentName)
+	{
+		var student = $scope.getStudent(studentName);
+		var retString = student["name"];
+        retString += "\nMath: " + student["math"];
+        retString += "\nReading: " + student["reading"];
+        retString += "\nWriting: " + student["writing"];
+        retString += "\nDiscipline: " + student["discipline"];
+        return retString;
+	}
 	
 
 	// Game Time functions
@@ -84,12 +105,15 @@ function ClassroomCtrl($scope,$timeout)
 	$scope.turnActive = false;  // This is true when a turn is taking place
 	$scope.takeTurn = function()
 	{
-		$scope.game["turn"]++;
-		$scope.turnActive = true;
-		$timeout($scope.onActionFinished,1000);	
+		if (!$scope.turnActive)
+		{
+			$scope.turnActive = true;
+			$timeout($scope.onActionFinished,1000);
+		}
 	}
 	$scope.onActionFinished = function()
 	{
+		$scope.game["turn"]++;
 		$scope.turnActive = false;
 	}
 	
@@ -103,4 +127,9 @@ function ClassroomCtrl($scope,$timeout)
 	{
 		return Math.floor(Math.random() * num2) + num1;
 	}
-}
+}]);
+
+
+
+
+
