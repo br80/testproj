@@ -40,56 +40,69 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	}
 	
 	$scope.modalShown = false;
-	$scope.toggleModal = function() {
+	$scope.modalStudentName = "test";
+	$scope.toggleModal = function(studentName) {
+		$scope.modalStudentName = studentName;
     	$scope.modalShown = !$scope.modalShown;
 	};
+	$scope.getModalStudent = function()
+	{
+		var student = $scope.students[$scope.modalStudentName];
+		return student;
+	}
 	
 	
 	// Array with students
-	$scope.students = [
-        {
+	$scope.students = {
+        "Riley": {
                 "name":"Riley",
                 "math":1,
                 "reading":1,
                 "writing":1,
-                "discipline":1
+                "discipline":1,
+                "face": "neutral"
         },
-        {
+        "Kelly": {
                 "name":"Kelly",
                 "math":1,
                 "reading":1,
                 "writing":1,
-                "discipline":1
+                "discipline":1,
+                "face": "neutral"
         },
-        {
+        "Alex": {
                 "name":"Alex",
                 "math":1,
                 "reading":1,
                 "writing":1,
-                "discipline":1
+                "discipline":1,
+                "face": "neutral"
         },
-        {
+        "Taylor": {
                 "name":"Taylor",
                 "math":1,
                 "reading":1,
                 "writing":1,
-                "discipline":1
+                "discipline":1,
+                "face": "neutral"
         },
-        {
+        "Morgan": {
                 "name":"Morgan",
                 "math":1,
                 "reading":1,
                 "writing":1,
-                "discipline":1
+                "discipline":1,
+                "face": "neutral"
         },
-        {
+        "Jesse": {
                 "name":"Jesse",
                 "math":1,
                 "reading":1,
                 "writing":1,
-                "discipline":1
+                "discipline":1,
+                "face": "neutral"
         }
-	];
+	};
 	
 	// Function to return a student entry in the array.
 	$scope.getStudent = function(studentName)
@@ -108,7 +121,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	// Generate tooltip text (shows stats)
 	$scope.studentTooltip = function(studentName)
 	{
-		var student = $scope.getStudent(studentName);
+		var student = $scope.students[studentName];
 		var retString = student["name"];
         retString += "\nMath: " + student["math"];
         retString += "\nReading: " + student["reading"];
