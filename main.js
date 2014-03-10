@@ -97,91 +97,173 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	};
 
 	// Dictionary of class subjects
+	$scope.subjects2 = [
+        	{
+        		"name": "Math 1",
+        		"active":true
+        	},
+        	{
+        		"name": "Math 2",
+        		"active":false
+        	},
+        	{
+        		"name": "Math 3",
+        		"active":false
+        	},
+        	{
+        		"name": "Math 4",
+        		"active":false
+        	},
+        	{
+        		"name": "Math 5",
+        		"active":false
+        	},
+        	{
+        		"name": "Math 6",
+        		"active":false
+        	},
+        	{
+        		"name": "Math 7",
+        		"active":false
+        	},
+        	{
+        		"name": "Math 8",
+        		"active":false
+        	},
+        	{
+        		"name": "Math 9",
+        		"active":false
+        	},
+        	{
+        		"name": "Math 10",
+        		"active":false
+        	},
+        	{
+        		"name": "Reading 1",
+        		"active":true
+        	},
+        	{
+        		"name": "Reading 2",
+        		"active":false
+        	},
+        	{
+        		"name": "Reading 3",
+        		"active":false
+        	},
+        	{
+        		"name": "Reading 4",
+        		"active":false
+        	},
+        	{
+        		"name": "Reading 5",
+        		"active":false
+        	},
+        	{
+        		"name": "Writing 1",
+        		"active":true
+        	},
+        	{
+        		"name": "Writing 2",
+        		"active":false
+        	},
+        	{
+        		"name": "Writing 3",
+        		"active":false
+        	},
+        	{
+        		"name": "Writing 4",
+        		"active":false
+        	},
+        	{
+        		"name": "Writing 5",
+        		"active":false
+        	}
+    ];
 	$scope.subjects = {
         "math":[
         	{
         		"name": "Math 1",
-        		"tested":false
+        		"active":true
         	},
         	{
         		"name": "Math 2",
-        		"tested":false
+        		"active":false
         	},
         	{
         		"name": "Math 3",
-        		"tested":false
+        		"active":false
         	},
         	{
         		"name": "Math 4",
-        		"tested":false
+        		"active":false
         	},
         	{
         		"name": "Math 5",
-        		"tested":false
+        		"active":false
         	},
         	{
         		"name": "Math 6",
-        		"tested":false
+        		"active":false
         	},
         	{
         		"name": "Math 7",
-        		"tested":false
+        		"active":false
         	},
         	{
         		"name": "Math 8",
-        		"tested":false
+        		"active":false
         	},
         	{
         		"name": "Math 9",
-        		"tested":false
+        		"active":false
         	},
         	{
         		"name": "Math 10",
-        		"tested":false
+        		"active":false
         	}
         ],
         "reading":[
         	{
         		"name": "Reading 1",
-        		"tested":false
+        		"active":true
         	},
         	{
         		"name": "Reading 2",
-        		"tested":false
+        		"active":false
         	},
         	{
         		"name": "Reading 3",
-        		"tested":false
+        		"active":false
         	},
         	{
         		"name": "Reading 4",
-        		"tested":false
+        		"active":false
         	},
         	{
         		"name": "Reading 5",
-        		"tested":false
+        		"active":false
         	}
         ],
         "writing":[
         	{
         		"name": "Writing 1",
-        		"tested":false
+        		"active":true
         	},
         	{
         		"name": "Writing 2",
-        		"tested":false
+        		"active":false
         	},
         	{
         		"name": "Writing 3",
-        		"tested":false
+        		"active":false
         	},
         	{
         		"name": "Writing 4",
-        		"tested":false
+        		"active":false
         	},
         	{
         		"name": "Writing 5",
-        		"tested":false
+        		"active":false
         	}
         ]
    	};
@@ -316,7 +398,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	$scope.turnActive = false;  // This is true when a turn is taking place
 	$scope.numberOfTurnsToTake = 0;  // This is set with getNumberOfTurns() when an action is taken
 	$scope.currentAction = "lecture";
-	$scope.currentSubject = "default";
+	$scope.currentSubject = $scope.subjects["math"][0];  // TODO: FIGURE OUT WHY THIS DOESN'T UPDATE!!!!!!!!!!!!!!
 	// Get the number of turns from the classTimeAmount scope variable
 	$scope.getNumberOfTurns = function()
 	{
