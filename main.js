@@ -47,7 +47,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
                 "writing":1,
                 "discipline":1,
                 "face": "Neutral",
-                "state": "neutral"
+                "faceIndex":1
         },
         "Kelly": {
                 "name":"Kelly",
@@ -56,7 +56,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
                 "writing":1,
                 "discipline":1,
                 "face": "Neutral",
-                "state": "neutral"
+                "faceIndex":1
         },
         "Alex": {
                 "name":"Alex",
@@ -65,7 +65,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
                 "writing":1,
                 "discipline":1,
                 "face": "Neutral",
-                "state": "neutral"
+                "faceIndex":1
         },
         "Taylor": {
                 "name":"Taylor",
@@ -74,7 +74,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
                 "writing":1,
                 "discipline":1,
                 "face": "Neutral",
-                "state": "neutral"
+                "faceIndex":1
         },
         "Morgan": {
                 "name":"Morgan",
@@ -83,7 +83,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
                 "writing":1,
                 "discipline":1,
                 "face": "Neutral",
-                "state": "neutral"
+                "faceIndex":1
         },
         "Jesse": {
                 "name":"Jesse",
@@ -92,177 +92,119 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
                 "writing":1,
                 "discipline":1,
                 "face": "Neutral",
-                "state": "neutral"
+                "faceIndex":1
         }
 	};
 
 	// Dictionary of class subjects
-	$scope.subjects2 = [
-        	{
-        		"name": "Math 1",
-        		"active":true
-        	},
-        	{
-        		"name": "Math 2",
-        		"active":false
-        	},
-        	{
-        		"name": "Math 3",
-        		"active":false
-        	},
-        	{
-        		"name": "Math 4",
-        		"active":false
-        	},
-        	{
-        		"name": "Math 5",
-        		"active":false
-        	},
-        	{
-        		"name": "Math 6",
-        		"active":false
-        	},
-        	{
-        		"name": "Math 7",
-        		"active":false
-        	},
-        	{
-        		"name": "Math 8",
-        		"active":false
-        	},
-        	{
-        		"name": "Math 9",
-        		"active":false
-        	},
-        	{
-        		"name": "Math 10",
-        		"active":false
-        	},
-        	{
-        		"name": "Reading 1",
-        		"active":true
-        	},
-        	{
-        		"name": "Reading 2",
-        		"active":false
-        	},
-        	{
-        		"name": "Reading 3",
-        		"active":false
-        	},
-        	{
-        		"name": "Reading 4",
-        		"active":false
-        	},
-        	{
-        		"name": "Reading 5",
-        		"active":false
-        	},
-        	{
-        		"name": "Writing 1",
-        		"active":true
-        	},
-        	{
-        		"name": "Writing 2",
-        		"active":false
-        	},
-        	{
-        		"name": "Writing 3",
-        		"active":false
-        	},
-        	{
-        		"name": "Writing 4",
-        		"active":false
-        	},
-        	{
-        		"name": "Writing 5",
-        		"active":false
-        	}
-    ];
 	$scope.subjects = {
         "math":[
         	{
         		"name": "Math 1",
+        		"subject": "math",
         		"active":true
         	},
         	{
         		"name": "Math 2",
+        		"subject": "math",
         		"active":false
         	},
         	{
         		"name": "Math 3",
+        		"subject": "math",
         		"active":false
         	},
         	{
         		"name": "Math 4",
+        		"subject": "math",
         		"active":false
         	},
         	{
         		"name": "Math 5",
+        		"subject": "math",
         		"active":false
         	},
         	{
         		"name": "Math 6",
+        		"subject": "math",
         		"active":false
         	},
         	{
         		"name": "Math 7",
+        		"subject": "math",
         		"active":false
         	},
         	{
         		"name": "Math 8",
+        		"subject": "math",
         		"active":false
         	},
         	{
         		"name": "Math 9",
+        		"subject": "math",
         		"active":false
         	},
         	{
         		"name": "Math 10",
+        		"subject": "math",
         		"active":false
         	}
         ],
         "reading":[
         	{
         		"name": "Reading 1",
+        		"subject": "reading",
         		"active":true
         	},
         	{
         		"name": "Reading 2",
+        		"subject": "reading",
+
         		"active":false
         	},
         	{
         		"name": "Reading 3",
+        		"subject": "reading",
+
         		"active":false
         	},
         	{
         		"name": "Reading 4",
+        		"subject": "reading",
+
         		"active":false
         	},
         	{
         		"name": "Reading 5",
+        		"subject": "reading",
+
         		"active":false
         	}
         ],
         "writing":[
         	{
         		"name": "Writing 1",
+        		"subject": "writing",
         		"active":true
         	},
         	{
         		"name": "Writing 2",
+        		"subject": "writing",
         		"active":false
         	},
         	{
         		"name": "Writing 3",
+        		"subject": "writing",
         		"active":false
         	},
         	{
         		"name": "Writing 4",
+        		"subject": "writing",
         		"active":false
         	},
         	{
         		"name": "Writing 5",
+        		"subject": "writing",
         		"active":false
         	}
         ]
@@ -412,6 +354,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 			$scope.numberOfTurnsToTake = $scope.getNumberOfTurns();
 			$scope.turnActive = true;
 			$scope.classTimeAmount = $scope.classTimeRemaining[$scope.classTimeRemaining.length - $scope.numberOfTurnsToTake];
+			$scope.updateStudents();
 			$timeout($scope.processTurn,1000);
 		}
 		else
@@ -427,6 +370,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 		if (!$scope.turnActive) return;  // Terminal case
 		$scope.player["time"]++;
 		$scope.numberOfTurnsToTake--;
+		$scope.updateStudents();
 		$scope.setClassTimeRemaining(); // Update remaining class time
 		if ($scope.numberOfTurnsToTake <= 0)
 		{
@@ -435,7 +379,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 		else
 		{
 			$scope.classTimeAmount = $scope.classTimeRemaining[$scope.classTimeRemaining.length - $scope.numberOfTurnsToTake];
-			$timeout($scope.processTurn,1000);
+			$timeout($scope.processTurn,1000);  // Time per turn.  Should probably make this a variable at the top
 		}
 	}
 	$scope.getActionVerb = function()
@@ -446,7 +390,133 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 			return "Stop";
 	}
 	
-
+	// When turns are being taken, update student entries accordingly
+	$scope.updateStudents = function()
+	{
+		for (student in $scope.students)
+		{
+			if ($scope.numberOfTurnsToTake <= 0)
+			{
+				$scope.students[student] = $scope.setStudentToNeutral($scope.students[student]);
+			}
+			else if ($scope.currentAction == "lecture")
+			{
+				$scope.students[student] = $scope.doLectureTurn($scope.students[student]);	
+			}
+			else if ($scope.currentAction == "classwork")
+			{
+				$scope.students[student] = $scope.doClassworkTurn($scope.students[student]);
+			}
+			else if ($scope.currentAction == "exam")
+			{
+				$scope.students[student] = $scope.doExamTurn($scope.students[student]);
+			}
+			else
+			{
+				// pass
+			}
+		}	
+	}
+	
+	// TODO: Make all of these functions have better learning heuristics
+	$scope.doLectureTurn = function (student)
+	{
+		returnStudent = student;  // The value to return
+		if (returnStudent["face"] == "Trouble")
+		{
+			// Do nothing.  Troublesome students stay troublesome until you click their portrait.	
+		}
+		else if ($scope.RandomRange(1,10) == 1)
+		{
+			returnStudent[$scope.currentSubject["subject"]]++;
+			returnStudent["face"] = "Learning";
+			returnStudent["faceIndex"] = 1;
+		}
+		else if ($scope.RandomRange(1,10) == 2)
+		{
+			returnStudent[$scope.currentSubject["subject"]]++;
+			returnStudent["face"] = "Trouble";
+			returnStudent["faceIndex"] = $scope.RandomRange(1,3);
+		}
+		else
+		{
+			returnStudent["face"] = "Neutral";
+			returnStudent["faceIndex"] = $scope.RandomRange(1,3);
+		}
+		return returnStudent;
+	}
+	$scope.doClassworkTurn = function (student)
+	{
+		returnStudent = student;  // The value to return
+		if (returnStudent["face"] == "Trouble")
+		{
+			// Do nothing.  Troublesome students stay troublesome until you click their portrait.	
+		}
+		else if ($scope.RandomRange(1,10) == 1)
+		{
+			returnStudent[$scope.currentSubject["subject"]]++;
+			returnStudent["face"] = "Learning";
+			returnStudent["faceIndex"] = 1;
+		}
+		else if ($scope.RandomRange(1,10) == 2)
+		{
+			returnStudent[$scope.currentSubject["subject"]]++;
+			returnStudent["face"] = "Trouble";
+			returnStudent["faceIndex"] = $scope.RandomRange(1,3);
+		}
+		else
+		{
+			returnStudent["face"] = "Working";
+			returnStudent["faceIndex"] = $scope.RandomRange(1,3);
+		}
+		return returnStudent;
+	}
+	$scope.doExamTurn = function (student)
+	{
+		returnStudent = student;  // The value to return
+		if (returnStudent["face"] == "Trouble")
+		{
+			// Do nothing.  Troublesome students stay troublesome until you click their portrait.	
+		}
+		else if ($scope.RandomRange(1,10) == 1)
+		{
+			returnStudent[$scope.currentSubject["subject"]]++;
+			returnStudent["face"] = "Learning";
+			returnStudent["faceIndex"] = 1;
+		}
+		else if ($scope.RandomRange(1,20) == 2)
+		{
+			returnStudent[$scope.currentSubject["subject"]]++;
+			returnStudent["face"] = "Trouble";
+			returnStudent["faceIndex"] = $scope.RandomRange(1,3);
+		}
+		else
+		{
+			returnStudent["face"] = "Working";
+			returnStudent["faceIndex"] = $scope.RandomRange(1,3);
+		}
+		return returnStudent;
+	}
+	$scope.setStudentToNeutral = function (student)
+	{
+		returnStudent = student;  // The value to return
+		if (returnStudent["face"] != "Trouble")
+		{
+			returnStudent["face"] = "Neutral";
+			returnStudent["faceIndex"] = $scope.RandomRange(1,3);
+		}
+		return returnStudent;
+	}
+	$scope.handlePortraitClick = function (studentName)
+	{
+		var student = $scope.students[studentName];
+		if (student["face"] == "Trouble")
+		{
+			// Make the student non-troublesome
+			student["face"] = "Neutral";
+			student["faceIndex"] = $scope.RandomRange(1,3);
+		}
+	}
 	
 
 
