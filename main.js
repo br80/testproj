@@ -21,7 +21,9 @@ app.directive('modalDialog', function() {
         scope.show = false;
       };
     },
-    template: '<div class="ng-modal" ng-show="show"><div class="ng-modal-overlay" ng-click="hideModal()"></div><div class="ng-modal-dialog" ng-style="dialogStyle"><div class="ng-modal-close" ng-click="hideModal()">X</div><div class="ng-modal-dialog-content" ng-transclude></div></div></div>'
+    template: '<div class="ng-modal" ng-show="show"><div class="ng-modal-overlay" ng-click="hideModal()">' + 
+        '</div><div class="ng-modal-dialog" ng-style="dialogStyle"><div class="ng-modal-close" ng-click="hideModal()">X' + 
+        '</div><div class="ng-modal-dialog-content" ng-transclude></div></div></div>'
   }
 })
 
@@ -228,27 +230,28 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	// Function to return a student entry in the array.
 	$scope.getStudent = function(studentName)
 	{
-		retString = ''
+		retArray = [];
 		for (var i = 0 ; i < $scope.students.length ; i++)
 		{
 			if ($scope.students[i]['name'] == studentName)
 				return $scope.students[i];
 			else
-				retString += $scope.students[i]['name'];
+				retArray.push($scope.students[i]['name']);
 		}
-		return retString;
+		return retArray.join("");
 	}
 	
 	// Generate tooltip text (shows stats)
 	$scope.studentTooltip = function(studentName)
 	{
 		var student = $scope.students[studentName];
-		var retString = student['name'];
-        retString += '\nMath: ' + student['math'];
-        retString += '\nReading: ' + student['reading'];
-        retString += '\nWriting: ' + student['writing'];
-        retString += '\nDiscipline: ' + student['discipline'];
-        return retString;
+		var retArray = [];
+		retArray.push(student['name']);
+        retArray.push('Math: ' + student['math']);
+        retArray.push('Reading: ' + student['reading']);
+        retArray.push('Writing: ' + student['writing']);
+        retArray.push('Discipline: ' + student['discipline']);
+        return retArray.join("\n");
 	}
 	
 
@@ -294,11 +297,11 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 			var minutes = 10 * (timeUnitsRemaining % 6);
 			
 			// Make string version of time values
-			var toString = '';
-			if (hours > 0) toString += hours + ' hour';
-			if (hours > 1) toString += 's';
-			if (minutes > 0) toString += ' ' + minutes + ' minutes';
-			timeArray.push({'hours': hours, 'minutes':minutes, 'toString': toString}); // Push to time Array
+			var toStringArray = [];
+			if (hours > 0) toStringArray.push(hours + ' hour');
+			if (hours > 1) toStringArray.push('s');
+			if (minutes > 0) toStringArray.push(' ' + minutes + ' minutes');
+			timeArray.push({'hours': hours, 'minutes':minutes, 'toString': toStringArray.join("")}); // Push to time Array
 			
 			timeUnitsRemaining--;
 		}
