@@ -233,7 +233,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 		retArray = [];
 		for (var i = 0 ; i < $scope.students.length ; i++)
 		{
-			if ($scope.students[i]['name'] == studentName)
+			if ($scope.students[i]['name'] === studentName)
 				return $scope.students[i];
 			else
 				retArray.push($scope.students[i]['name']);
@@ -305,7 +305,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 			
 			timeUnitsRemaining--;
 		}
-		if ($scope.currentAction == 'exam')
+		if ($scope.currentAction === 'exam')
 		{
 			$scope.classTimeAmount = timeArray[timeArray.length - 12];
 		}
@@ -327,7 +327,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	// Handle time changes when radio buttons are selected
 	$scope.selectActionButton = function(value)
 	{
-		if (value == 'exam')
+		if (value === 'exam')
 		{
 			$scope.classTimeAmount = $scope.classTimeRemaining[$scope.classTimeRemaining.length - 12];
 		}
@@ -402,15 +402,15 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 			{
 				$scope.students[student] = $scope.setStudentToNeutral($scope.students[student]);
 			}
-			else if ($scope.currentAction == 'lecture')
+			else if ($scope.currentAction === 'lecture')
 			{
 				$scope.students[student] = $scope.doLectureTurn($scope.students[student]);	
 			}
-			else if ($scope.currentAction == 'classwork')
+			else if ($scope.currentAction === 'classwork')
 			{
 				$scope.students[student] = $scope.doClassworkTurn($scope.students[student]);
 			}
-			else if ($scope.currentAction == 'exam')
+			else if ($scope.currentAction === 'exam')
 			{
 				$scope.students[student] = $scope.doExamTurn($scope.students[student]);
 			}
@@ -425,17 +425,17 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	$scope.doLectureTurn = function (student)
 	{
 		returnStudent = student;  // The value to return
-		if (returnStudent['face'] == 'Trouble')
+		if (returnStudent['face'] === 'Trouble')
 		{
 			// Do nothing.  Troublesome students stay troublesome until you click their portrait.	
 		}
-		else if ($scope.RandomRange(1,10) == 1)
+		else if ($scope.RandomRange(1,10) === 1)
 		{
 			returnStudent[$scope.currentSubject.subject]++;
 			returnStudent.face = 'Learning';
 			returnStudent.faceIndex = 1;
 		}
-		else if ($scope.RandomRange(1,10) == 2)
+		else if ($scope.RandomRange(1,10) === 2)
 		{
 			returnStudent[$scope.currentSubject.subject]++;
 			returnStudent.face = 'Trouble';
@@ -451,17 +451,17 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	$scope.doClassworkTurn = function (student)
 	{
 		returnStudent = student;  // The value to return
-		if (returnStudent.face == 'Trouble')
+		if (returnStudent.face === 'Trouble')
 		{
 			// Do nothing.  Troublesome students stay troublesome until you click their portrait.	
 		}
-		else if ($scope.RandomRange(1,10) == 1)
+		else if ($scope.RandomRange(1,10) === 1)
 		{
 			returnStudent[$scope.currentSubject.subject]++;
 			returnStudent.face = 'Learning';
 			returnStudent.faceIndex = 1;
 		}
-		else if ($scope.RandomRange(1,10) == 2)
+		else if ($scope.RandomRange(1,10) === 2)
 		{
 			returnStudent[$scope.currentSubject.subject]++;
 			returnStudent.face = 'Trouble';
@@ -477,17 +477,17 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	$scope.doExamTurn = function (student)
 	{
 		returnStudent = student;  // The value to return
-		if (returnStudent.face == 'Trouble')
+		if (returnStudent.face === 'Trouble')
 		{
 			// Do nothing.  Troublesome students stay troublesome until you click their portrait.	
 		}
-		else if ($scope.RandomRange(1,10) == 1)
+		else if ($scope.RandomRange(1,10) === 1)
 		{
 			returnStudent[$scope.currentSubject.subject]++;
 			returnStudent.face = 'Learning';
 			returnStudent.faceIndex = 1;
 		}
-		else if ($scope.RandomRange(1,20) == 2)
+		else if ($scope.RandomRange(1,20) === 2)
 		{
 			returnStudent[$scope.currentSubject.subject]++;
 			returnStudent.face = 'Trouble';
@@ -503,7 +503,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	$scope.setStudentToNeutral = function (student)
 	{
 		returnStudent = student;  // The value to return
-		if (returnStudent.face != 'Trouble')
+		if (returnStudent.face !== 'Trouble')
 		{
 			returnStudent.face = 'Neutral';
 			returnStudent.faceIndex = $scope.RandomRange(1,3);
@@ -513,7 +513,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	$scope.handlePortraitClick = function (studentName)
 	{
 		var student = $scope.students[studentName];
-		if (student.face == 'Trouble')
+		if (student.face === 'Trouble')
 		{
 			// Make the student non-troublesome
 			student.face = 'Neutral';
