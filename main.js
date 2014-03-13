@@ -36,7 +36,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	// Dictionary with game and player variables
 	$scope.player = {
 		'name': 'Brady',
-		'time': 0
+		'gameTime': 0
 	}
 	
 	
@@ -246,11 +246,11 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	{
 		var student = $scope.students[studentName];
 		var retArray = [];
-		retArray.push(student['name']);
-        retArray.push('Math: ' + student['math']);
-        retArray.push('Reading: ' + student['reading']);
-        retArray.push('Writing: ' + student['writing']);
-        retArray.push('Discipline: ' + student['discipline']);
+		retArray.push(student.name);
+        retArray.push('Math: ' + student.math);
+        retArray.push('Reading: ' + student.reading);
+        retArray.push('Writing: ' + student.writing);
+        retArray.push('Discipline: ' + student.discipline);
         return retArray.join("\n");
 	}
 	
@@ -260,12 +260,12 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	////////////////////////////////
 	$scope.getDay = function()
 	{
-		return Math.floor($scope.player['time'] / 36 + 1);
+		return Math.floor($scope.player.gameTime / 36 + 1);
 	}
 	// Each day consists of 36 time units, representing 10 minutes each.
 	$scope.getTime = function()
 	{
-		var timeUnits = $scope.player['time'] % 36;
+		var timeUnits = $scope.player.gameTime % 36;
 		if (timeUnits < 24) // Before noon
 		{
 			return '' + (8 + Math.floor(timeUnits / 6)) + ':' + (timeUnits % 6) + '0';
@@ -280,7 +280,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	$scope.setClassTimeRemaining = function ()
 	{
 		var timeArray = [];
-		var timeUnits = $scope.player['time'] % 36;
+		var timeUnits = $scope.player.gameTime % 36;
 		var timeUnitsRemaining;
 		if (timeUnits < 24) // Before noon
 		{
@@ -343,11 +343,11 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	$scope.turnActive = false;  // This is true when a turn is taking place
 	$scope.numberOfTurnsToTake = 0;  // This is set with getNumberOfTurns() when an action is taken
 	$scope.currentAction = 'lecture';
-	$scope.currentSubject = $scope.subjects['math'][0];  // TODO: FIGURE OUT WHY THIS DOESN'T UPDATE!!!!!!!!!!!!!!
+	$scope.currentSubject = $scope.subjects.math[0];  // TODO: FIGURE OUT WHY THIS DOESN'T UPDATE!!!!!!!!!!!!!!
 	// Get the number of turns from the classTimeAmount scope variable
 	$scope.getNumberOfTurns = function()
 	{
-		return ($scope.classTimeAmount['minutes'] / 10) + ($scope.classTimeAmount['hours'] * 6);
+		return ($scope.classTimeAmount.minutes / 10) + ($scope.classTimeAmount.hours * 6);
 	}
 	$scope.takeTurn = function()
 	{
@@ -371,7 +371,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	$scope.processTurn = function()
 	{
 		if (!$scope.turnActive) return;  // Terminal case
-		$scope.player['time']++;
+		$scope.player.gameTime++;
 		$scope.numberOfTurnsToTake--;
 		$scope.updateStudents();
 		$scope.setClassTimeRemaining(); // Update remaining class time
@@ -431,93 +431,93 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 		}
 		else if ($scope.RandomRange(1,10) == 1)
 		{
-			returnStudent[$scope.currentSubject['subject']]++;
-			returnStudent['face'] = 'Learning';
-			returnStudent['faceIndex'] = 1;
+			returnStudent[$scope.currentSubject.subject]++;
+			returnStudent.face = 'Learning';
+			returnStudent.faceIndex = 1;
 		}
 		else if ($scope.RandomRange(1,10) == 2)
 		{
-			returnStudent[$scope.currentSubject['subject']]++;
-			returnStudent['face'] = 'Trouble';
-			returnStudent['faceIndex'] = $scope.RandomRange(1,3);
+			returnStudent[$scope.currentSubject.subject]++;
+			returnStudent.face = 'Trouble';
+			returnStudent.faceIndex = $scope.RandomRange(1,3);
 		}
 		else
 		{
-			returnStudent['face'] = 'Neutral';
-			returnStudent['faceIndex'] = $scope.RandomRange(1,3);
+			returnStudent.face = 'Neutral';
+			returnStudent.faceIndex = $scope.RandomRange(1,3);
 		}
 		return returnStudent;
 	}
 	$scope.doClassworkTurn = function (student)
 	{
 		returnStudent = student;  // The value to return
-		if (returnStudent['face'] == 'Trouble')
+		if (returnStudent.face == 'Trouble')
 		{
 			// Do nothing.  Troublesome students stay troublesome until you click their portrait.	
 		}
 		else if ($scope.RandomRange(1,10) == 1)
 		{
-			returnStudent[$scope.currentSubject['subject']]++;
-			returnStudent['face'] = 'Learning';
-			returnStudent['faceIndex'] = 1;
+			returnStudent[$scope.currentSubject.subject]++;
+			returnStudent.face = 'Learning';
+			returnStudent.faceIndex = 1;
 		}
 		else if ($scope.RandomRange(1,10) == 2)
 		{
-			returnStudent[$scope.currentSubject['subject']]++;
-			returnStudent['face'] = 'Trouble';
-			returnStudent['faceIndex'] = $scope.RandomRange(1,3);
+			returnStudent[$scope.currentSubject.subject]++;
+			returnStudent.face = 'Trouble';
+			returnStudent.faceIndex = $scope.RandomRange(1,3);
 		}
 		else
 		{
-			returnStudent['face'] = 'Working';
-			returnStudent['faceIndex'] = $scope.RandomRange(1,3);
+			returnStudent.face = 'Working';
+			returnStudent.faceIndex = $scope.RandomRange(1,3);
 		}
 		return returnStudent;
 	}
 	$scope.doExamTurn = function (student)
 	{
 		returnStudent = student;  // The value to return
-		if (returnStudent['face'] == 'Trouble')
+		if (returnStudent.face == 'Trouble')
 		{
 			// Do nothing.  Troublesome students stay troublesome until you click their portrait.	
 		}
 		else if ($scope.RandomRange(1,10) == 1)
 		{
-			returnStudent[$scope.currentSubject['subject']]++;
-			returnStudent['face'] = 'Learning';
-			returnStudent['faceIndex'] = 1;
+			returnStudent[$scope.currentSubject.subject]++;
+			returnStudent.face = 'Learning';
+			returnStudent.faceIndex = 1;
 		}
 		else if ($scope.RandomRange(1,20) == 2)
 		{
-			returnStudent[$scope.currentSubject['subject']]++;
-			returnStudent['face'] = 'Trouble';
-			returnStudent['faceIndex'] = $scope.RandomRange(1,3);
+			returnStudent[$scope.currentSubject.subject]++;
+			returnStudent.face = 'Trouble';
+			returnStudent.faceIndex = $scope.RandomRange(1,3);
 		}
 		else
 		{
-			returnStudent['face'] = 'Working';
-			returnStudent['faceIndex'] = $scope.RandomRange(1,3);
+			returnStudent.face = 'Working';
+			returnStudent.faceIndex = $scope.RandomRange(1,3);
 		}
 		return returnStudent;
 	}
 	$scope.setStudentToNeutral = function (student)
 	{
 		returnStudent = student;  // The value to return
-		if (returnStudent['face'] != 'Trouble')
+		if (returnStudent.face != 'Trouble')
 		{
-			returnStudent['face'] = 'Neutral';
-			returnStudent['faceIndex'] = $scope.RandomRange(1,3);
+			returnStudent.face = 'Neutral';
+			returnStudent.faceIndex = $scope.RandomRange(1,3);
 		}
 		return returnStudent;
 	}
 	$scope.handlePortraitClick = function (studentName)
 	{
 		var student = $scope.students[studentName];
-		if (student['face'] == 'Trouble')
+		if (student.face == 'Trouble')
 		{
 			// Make the student non-troublesome
-			student['face'] = 'Neutral';
-			student['faceIndex'] = $scope.RandomRange(1,3);
+			student.face = 'Neutral';
+			student.faceIndex = $scope.RandomRange(1,3);
 		}
 	}
 	
