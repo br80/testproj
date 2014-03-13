@@ -215,10 +215,12 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	
 	$scope.modalShown = false;
 	$scope.modalStudentName = 'test';
+	// Sets the student for the modal student window and opens the modal window.
 	$scope.toggleModal = function(studentName) {
 		$scope.modalStudentName = studentName;
     	$scope.modalShown = !$scope.modalShown;
 	};
+	// Return the student that is represented in the modal student window
 	$scope.getModalStudent = function()
 	{
 		var student = $scope.students[$scope.modalStudentName];
@@ -258,6 +260,8 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	////////////////////////////////
 	// Game Time functions
 	////////////////////////////////
+
+	// Return what day it is
 	$scope.getDay = function()
 	{
 		return Math.floor($scope.player.gameTime / 36 + 1);
@@ -349,6 +353,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	{
 		return ($scope.classTimeAmount.minutes / 10) + ($scope.classTimeAmount.hours * 6);
 	}
+	// Take the first turn and trigger the callback to take more turns
 	$scope.takeTurn = function()
 	{
 		if (!$scope.turnActive)
@@ -368,6 +373,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 			$scope.classTimeAmount = $scope.classTimeRemaining[0];
 		}
 	}
+	// Each turn, process the effects on each turn.
 	$scope.processTurn = function()
 	{
 		if (!$scope.turnActive) return;  // Terminal case
@@ -385,6 +391,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 			$timeout($scope.processTurn,1000);  // Time per turn.  Should probably make this a variable at the top
 		}
 	}
+	// What does the "Take Turn" button say?
 	$scope.getActionVerb = function()
 	{
 		if (!$scope.turnActive)
@@ -422,6 +429,8 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 	}
 	
 	// TODO: Make all of these functions have better learning heuristics
+	
+	// Process the effects on a student when they are listening to a lecture.  This algorithm is temporary.
 	$scope.doLectureTurn = function (student)
 	{
 		returnStudent = student;  // The value to return
@@ -448,6 +457,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 		}
 		return returnStudent;
 	}
+	// Process the effects on a student when they are doing classwork.  This algorithm is temporary.
 	$scope.doClassworkTurn = function (student)
 	{
 		returnStudent = student;  // The value to return
@@ -474,6 +484,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 		}
 		return returnStudent;
 	}
+	// Process the effects on a student when they are doing an exam.  This algorithm is temporary.
 	$scope.doExamTurn = function (student)
 	{
 		returnStudent = student;  // The value to return
@@ -500,6 +511,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 		}
 		return returnStudent;
 	}
+	// Return a student's portrait to neutral.
 	$scope.setStudentToNeutral = function (student)
 	{
 		returnStudent = student;  // The value to return
@@ -510,6 +522,8 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout)
 		}
 		return returnStudent;
 	}
+	// When a student is making trouble and they are clicked, return them to neutral.
+
 	$scope.handlePortraitClick = function (studentName)
 	{
 		var student = $scope.students[studentName];
