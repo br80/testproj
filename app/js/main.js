@@ -1,9 +1,16 @@
-var app = angular.module('myApp', []);
+var myApp = angular.module('myApp', []);
+
+
+myApp.filter('reverse', function() {
+  return function (text) {
+    return text.split("").reverse().join("");
+  }
+})
 
 
 
 // This directive will set the modal pop-up window
-app.directive('modalDialog', function() {
+myApp.directive('modalDialog', function() {
   return {
     restrict: 'E',
     scope: {
@@ -31,7 +38,7 @@ app.directive('modalDialog', function() {
 
 
 
-app.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout) {
+myApp.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout) {
   // Dictionary with game and player variables
   $scope.player = {
     'name': 'Brady',
