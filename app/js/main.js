@@ -1,7 +1,7 @@
-var myApp = angular.module('myApp', []);
+var app = angular.module('myApp', []);
 
 
-myApp.filter('reverse', function() {
+app.filter('reverse', function() {
   return function (text) {
     return text.split("").reverse().join("");
   }
@@ -10,7 +10,7 @@ myApp.filter('reverse', function() {
 
 
 // This directive will set the modal pop-up window
-myApp.directive('modalDialog', function() {
+app.directive('modalDialog', function() {
   return {
     restrict: 'E',
     scope: {
@@ -37,8 +37,86 @@ myApp.directive('modalDialog', function() {
 
 
 
+app.service('studentsService', function () {
 
-myApp.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeout) {
+  this.students = {
+        'Riley': {
+                'name':'Riley',
+                'math':1,
+                'reading':1,
+                'writing':1,
+                'discipline':1,
+                'face': 'Neutral',
+                'faceIndex':1
+        },
+        'Kelly': {
+                'name':'Kelly',
+                'math':1,
+                'reading':1,
+                'writing':1,
+                'discipline':1,
+                'face': 'Neutral',
+                'faceIndex':1
+        },
+        'Alex': {
+                'name':'Alex',
+                'math':1,
+                'reading':1,
+                'writing':1,
+                'discipline':1,
+                'face': 'Neutral',
+                'faceIndex':1
+        },
+        'Taylor': {
+                'name':'Taylor',
+                'math':1,
+                'reading':1,
+                'writing':1,
+                'discipline':1,
+                'face': 'Neutral',
+                'faceIndex':1
+        },
+        'Morgan': {
+                'name':'Morgan',
+                'math':1,
+                'reading':1,
+                'writing':1,
+                'discipline':1,
+                'face': 'Neutral',
+                'faceIndex':1
+        },
+        'Jesse': {
+                'name':'Jesse',
+                'math':1,
+                'reading':1,
+                'writing':1,
+                'discipline':1,
+                'face': 'Neutral',
+                'faceIndex':1
+        }
+  };
+
+  this.getStudent = function(studentName) {
+    return this.students[studentName];
+  }
+
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.controller('ClassroomCtrl', ['$scope', '$timeout', 'studentsService', function($scope,$timeout,studentsService) {
   // Dictionary with game and player variables
   $scope.player = {
     'name': 'Brady',
@@ -234,30 +312,19 @@ myApp.controller('ClassroomCtrl', ['$scope', '$timeout', function($scope,$timeou
     return student;
   }
   
-  
-  
-  // Function to return a student entry in the array.
-  $scope.getStudent = function getStudent(studentName) {
-    retArray = [];
-    for (var i = 0 ; i < $scope.students.length ; i++) {
-      if ($scope.students[i]['name'] === studentName)
-        return $scope.students[i];
-      else
-        retArray.push($scope.students[i]['name']);
-    }
-    return retArray.join("");
-  }
-  
+
+
   // Generate tooltip text (shows stats)
   $scope.studentTooltip = function studentTooltip(studentName) {
-    var student = $scope.students[studentName];
+//    var student = $scope.students[studentName];
+    var student = studentsService.getStudent(studentName);
     var retArray = [];
     retArray.push(student.name);
-        retArray.push('Math: ' + student.math);
-        retArray.push('Reading: ' + student.reading);
-        retArray.push('Writing: ' + student.writing);
-        retArray.push('Discipline: ' + student.discipline);
-        return retArray.join("\n");
+    retArray.push('Math: ' + student.math);
+    retArray.push('Reading: ' + student.reading);
+    retArray.push('Writing: ' + student.writing);
+    retArray.push('Discipline: ' + student.discipline);
+    return retArray.join("\n");
   }
   
 
