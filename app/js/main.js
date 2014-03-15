@@ -34,10 +34,55 @@ app.directive('modalDialog', function() {
   }
 })
 
+app.service('randomService', function() {
+
+  this.randomRange = function (num1, num2) {
+    return Math.floor(Math.random() * num2) + num1;
+  }
+
+})
 
 
 
-app.service('studentsService', function () {
+
+app.factory('modalDialogFactory', [function(studentsService) {
+
+  return {
+    stub: function () {
+      return "RETURN!!!";
+    }
+
+  }
+}]);
+
+
+app.factory('gameActionFactory', ['studentsService', function(studentsService) {
+
+  return {
+    testFactoryFunction: function () {
+      return "RETURN!!!";
+    }
+
+  }
+}]);
+
+
+
+app.factory('gameTimeFactory', [function(studentsService) {
+
+  return {
+    testFactoryFunction: function () {
+      return "RETURN!!!";
+    }
+
+  }
+}]);
+
+
+
+
+app.service('studentsService', [function () {
+
 
   this.students = {
         'Riley': {
@@ -96,13 +141,18 @@ app.service('studentsService', function () {
         }
   };
 
+  this.getStudents = function() {
+
+    return this.students;
+  }
+
   this.getStudent = function(studentName) {
     return this.students[studentName];
   }
 
 
 
-});
+}]);
 
 
 
@@ -114,73 +164,17 @@ app.service('studentsService', function () {
 
 
 
-
-
-app.controller('ClassroomCtrl', ['$scope', '$timeout', 'studentsService', function($scope,$timeout,studentsService) {
+app.controller('ClassroomCtrl', ['$scope', '$timeout', 'studentsService', 'randomService', function($scope,$timeout,studentsService,randomService) {
   // Dictionary with game and player variables
   $scope.player = {
     'name': 'Brady',
     'gameTime': 0
   }
-  
-  
-  // Dictionary of students
-  $scope.students = {
-        'Riley': {
-                'name':'Riley',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        },
-        'Kelly': {
-                'name':'Kelly',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        },
-        'Alex': {
-                'name':'Alex',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        },
-        'Taylor': {
-                'name':'Taylor',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        },
-        'Morgan': {
-                'name':'Morgan',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        },
-        'Jesse': {
-                'name':'Jesse',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        }
-  };
+
+  // TODO: Does this need to be here?  Seems redundant.
+  $scope.getStudents = function() {
+    return studentsService.getStudents();
+  }
 
   // Dictionary of class subjects
   $scope.subjects = {
@@ -308,7 +302,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', 'studentsService', functi
 
   // Return the student that is represented in the modal student window
   $scope.getModalStudent = function getModalStudent() {
-    var student = $scope.students[$scope.modalStudentName];
+    var student = studentsService.getStudent($scope.modalStudentName);
     return student;
   }
   
@@ -316,7 +310,6 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', 'studentsService', functi
 
   // Generate tooltip text (shows stats)
   $scope.studentTooltip = function studentTooltip(studentName) {
-//    var student = $scope.students[studentName];
     var student = studentsService.getStudent(studentName);
     var retArray = [];
     retArray.push(student.name);
@@ -457,18 +450,18 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', 'studentsService', functi
   
   // When turns are being taken, update student entries accordingly
   $scope.updateStudents = function updateStudents() {
-    for (student in $scope.students) {
+    for (student in studentsService.students) {
       if ($scope.numberOfTurnsToTake <= 0) {
-        $scope.students[student] = $scope.setStudentToNeutral($scope.students[student]);
+        studentsService.students[student] = studentsService.setStudentToNeutral(studentsService.students[student]);
       }
       else if ($scope.currentAction === 'lecture') {
-        $scope.students[student] = $scope.doLectureTurn($scope.students[student]);  
+        studentsService.students[student] = $scope.doLectureTurn(studentsService.students[student]);  
       }
       else if ($scope.currentAction === 'classwork') {
-        $scope.students[student] = $scope.doClassworkTurn($scope.students[student]);
+        studentsService.students[student] = $scope.doClassworkTurn(studentsService.students[student]);
       }
       else if ($scope.currentAction === 'exam') {
-        $scope.students[student] = $scope.doExamTurn($scope.students[student]);
+        studentsService.students[student] = $scope.doExamTurn(studentsService.students[student]);
       }
       else {
         // pass
@@ -480,90 +473,90 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', 'studentsService', functi
   
   // Process the effects on a student when they are listening to a lecture.  This algorithm is temporary.
   $scope.doLectureTurn = function doLectureTurn(student) {
-    returnStudent = student;  // The value to return
+    var returnStudent = student;  // The value to return
     if (returnStudent['face'] === 'Trouble') {
       // Do nothing.  Troublesome students stay troublesome until you click their portrait.  
     }
-    else if ($scope.randomRange(1,10) === 1) {
+    else if (randomService.randomRange(1,10) === 1) {
       returnStudent[$scope.currentSubject.subject]++;
       returnStudent.face = 'Learning';
       returnStudent.faceIndex = 1;
     }
-    else if ($scope.randomRange(1,10) === 2) {
+    else if (randomService.randomRange(1,10) === 2) {
       returnStudent[$scope.currentSubject.subject]++;
       returnStudent.face = 'Trouble';
-      returnStudent.faceIndex = $scope.randomRange(1,3);
+      returnStudent.faceIndex = randomService.randomRange(1,3);
     }
     else {
       returnStudent.face = 'Neutral';
-      returnStudent.faceIndex = $scope.randomRange(1,3);
+      returnStudent.faceIndex = randomService.randomRange(1,3);
     }
     return returnStudent;
   }
 
   // Process the effects on a student when they are doing classwork.  This algorithm is temporary.
   $scope.doClassworkTurn = function doClassworkTurn(student) {
-    returnStudent = student;  // The value to return
+    var returnStudent = student;  // The value to return
     if (returnStudent.face === 'Trouble') {
       // Do nothing.  Troublesome students stay troublesome until you click their portrait.  
     }
-    else if ($scope.randomRange(1,10) === 1) {
+    else if (randomService.randomRange(1,10) === 1) {
       returnStudent[$scope.currentSubject.subject]++;
       returnStudent.face = 'Learning';
       returnStudent.faceIndex = 1;
     }
-    else if ($scope.randomRange(1,10) === 2) {
+    else if (randomService.randomRange(1,10) === 2) {
       returnStudent[$scope.currentSubject.subject]++;
       returnStudent.face = 'Trouble';
-      returnStudent.faceIndex = $scope.randomRange(1,3);
+      returnStudent.faceIndex = randomService.randomRange(1,3);
     }
     else {
       returnStudent.face = 'Working';
-      returnStudent.faceIndex = $scope.randomRange(1,3);
+      returnStudent.faceIndex = randomService.randomRange(1,3);
     }
     return returnStudent;
   }
 
   // Process the effects on a student when they are doing an exam.  This algorithm is temporary.
   $scope.doExamTurn = function doExamTurn(student) {
-    returnStudent = student;  // The value to return
+    var returnStudent = student;  // The value to return
     if (returnStudent.face === 'Trouble') {
       // Do nothing.  Troublesome students stay troublesome until you click their portrait.  
     }
-    else if ($scope.randomRange(1,10) === 1) {
+    else if (randomService.randomRange(1,10) === 1) {
       returnStudent[$scope.currentSubject.subject]++;
       returnStudent.face = 'Learning';
       returnStudent.faceIndex = 1;
     }
-    else if ($scope.randomRange(1,20) === 2) {
+    else if (randomService.randomRange(1,20) === 2) {
       returnStudent[$scope.currentSubject.subject]++;
       returnStudent.face = 'Trouble';
       returnStudent.faceIndex = $scope.randomRange(1,3);
     }
     else {
       returnStudent.face = 'Working';
-      returnStudent.faceIndex = $scope.randomRange(1,3);
+      returnStudent.faceIndex = randomService.randomRange(1,3);
     }
     return returnStudent;
   }
 
   // Return a student's portrait to neutral.
   $scope.setStudentToNeutral = function setStudentToNeutral(student) {
-    returnStudent = student;  // The value to return
+    var returnStudent = student;  // The value to return
     if (returnStudent.face !== 'Trouble') {
       returnStudent.face = 'Neutral';
-      returnStudent.faceIndex = $scope.randomRange(1,3);
+      returnStudent.faceIndex = randomService.randomRange(1,3);
     }
     return returnStudent;
   }
 
   // When a student is making trouble and they are clicked, return them to neutral.
   $scope.handlePortraitClick = function handlePortraitClick(studentName) {
-    var student = $scope.students[studentName];
+    var student = studentsService.students[studentName];
     if (student.face === 'Trouble') {
       // Make the student non-troublesome
       student.face = 'Neutral';
-      student.faceIndex = $scope.randomRange(1,3);
+      student.faceIndex = randomService.randomRange(1,3);
     }
   }
   
@@ -573,10 +566,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', 'studentsService', functi
   // Util Functions
   /////////////////
   
-  // Implementation of randomRange
-  $scope.randomRange = function randomRange(num1, num2) {
-    return Math.floor(Math.random() * num2) + num1;
-  }
+
 }]);
 
 
