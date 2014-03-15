@@ -43,46 +43,8 @@ app.service('randomService', function() {
 })
 
 
-
-
-app.factory('modalDialogFactory', [function(studentsService) {
-
-  return {
-    stub: function () {
-      return "RETURN!!!";
-    }
-
-  }
-}]);
-
-
-app.factory('gameActionFactory', ['studentsService', function(studentsService) {
-
-  return {
-    testFactoryFunction: function () {
-      return "RETURN!!!";
-    }
-
-  }
-}]);
-
-
-
-app.factory('gameTimeFactory', [function(studentsService) {
-
-  return {
-    testFactoryFunction: function () {
-      return "RETURN!!!";
-    }
-
-  }
-}]);
-
-
-
-
+// Service that handles students
 app.service('studentsService', [function () {
-
 
   this.students = {
         'Riley': {
@@ -151,6 +113,13 @@ app.service('studentsService', [function () {
   }
 
 
+}]);
+
+
+// Service that holds player variables
+app.service('playerService', [function () {
+
+  this.playerName = "Brady";
 
 }]);
 
@@ -158,26 +127,9 @@ app.service('studentsService', [function () {
 
 
 
+app.service('subjectsService', [function () {
 
-
-
-
-
-
-app.controller('ClassroomCtrl', ['$scope', '$timeout', 'studentsService', 'randomService', function($scope,$timeout,studentsService,randomService) {
-  // Dictionary with game and player variables
-  $scope.player = {
-    'name': 'Brady',
-    'gameTime': 0
-  }
-
-  // TODO: Does this need to be here?  Seems redundant.
-  $scope.getStudents = function() {
-    return studentsService.getStudents();
-  }
-
-  // Dictionary of class subjects
-  $scope.subjects = {
+  this.subjects = {
         'math':[
           {
             'name': 'Math 1',
@@ -289,6 +241,94 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', 'studentsService', 'rando
           }
         ]
      };
+
+
+}]);
+
+
+
+
+app.factory('ModalDialogFactory', [function(studentsService) {
+
+  return {
+    stub: function () {
+      return "RETURN!!!";
+    }
+
+  }
+}]);
+
+
+app.factory('GameActionFactory', ['studentsService', function(studentsService) {
+
+  return {
+    testFactoryFunction: function () {
+      return "RETURN!!!";
+    }
+
+  }
+}]);
+
+
+// Factory that handles time/turn functions
+app.factory('GameTimeFactory', [function() {
+
+  var currentTurn = 0;
+  return {
+
+    turn: currentTurn,
+
+    // Generate time string from number of turns. Each day consists of 36 time units, representing 10 minutes each.
+    getTime: function getTime() {
+      var timeUnits = currentTurn % 36;
+      if (timeUnits < 24) {   // Before noon
+       return '' + (8 + Math.floor(timeUnits / 6)) + ':' + (timeUnits % 6) + '0';
+      }
+      else {   // After noon (12-1 is lunch and is not recorded)
+        return '' + (1 + Math.floor((timeUnits - 24) / 6)) + ':' + (timeUnits % 6) + '0';
+      }
+    },
+
+    getDay: function getDay() {
+      return Math.floor(currentTurn / 36 + 1);
+    }
+
+  };
+}]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.controller('ClassroomCtrl',
+  ['$scope', '$timeout', 'studentsService', 'randomService', 'playerService', 'subjectsService', 'GameTimeFactory',
+  function($scope,$timeout,studentsService,randomService,playerService,subjectsService, GameTimeFactory) {
+  // Dictionary with game and player variables
+
+  $scope.getPlayerName = function () {
+    return playerService.playerName;
+  }
+
+  $scope.getSubjects = function () {
+    return subjectsService.subjects;
+  }
+
+  // TODO: Does this need to be here?  Seems redundant.
+  $scope.getStudents = function() {
+    return studentsService.getStudents();
+  }
+
   
   
   $scope.modalShown = false;
@@ -326,25 +366,15 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', 'studentsService', 'rando
   ////////////////////////////////
 
   // Return what day it is
-  $scope.getDay = function getDay() {
-    return Math.floor($scope.player.gameTime / 36 + 1);
-  }
+  $scope.getDay = function getDay() {return GameTimeFactory.getDay();}
 
   // Each day consists of 36 time units, representing 10 minutes each.
-  $scope.getTime = function getTime() {
-    var timeUnits = $scope.player.gameTime % 36;
-    if (timeUnits < 24) {   // Before noon
-      return '' + (8 + Math.floor(timeUnits / 6)) + ':' + (timeUnits % 6) + '0';
-    }
-    else {   // After noon (12-1 is lunch and is not recorded)
-      return '' + (1 + Math.floor((timeUnits - 24) / 6)) + ':' + (timeUnits % 6) + '0';
-    }
-  }
+  $scope.getTime = function() {return GameTimeFactory.getTime();}
   
   // This will return an array with the number of hours remaining before lunch (if before noon) or the end of the day (if after noon)
   $scope.setClassTimeRemaining = function setClassTimeRemaining() {
     var timeArray = [];
-    var timeUnits = $scope.player.gameTime % 36;
+    var timeUnits = GameTimeFactory.turn % 36;
     var timeUnitsRemaining;
     if (timeUnits < 24) {   // Before noon
       timeUnitsRemaining = 24 - timeUnits;
@@ -399,7 +429,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', 'studentsService', 'rando
   $scope.turnActive = false;  // This is true when a turn is taking place
   $scope.numberOfTurnsToTake = 0;  // This is set with getNumberOfTurns() when an action is taken
   $scope.currentAction = 'lecture';
-  $scope.currentSubject = $scope.subjects.math[0];  // FIXME: FIGURE OUT WHY THIS DOESN'T UPDATE!!!!!!!!!!!!!!
+  $scope.currentSubject = subjectsService.subjects.math[0];  // FIXME: FIGURE OUT WHY THIS DOESN'T UPDATE!!!!!!!!!!!!!!
 
   // Get the number of turns from the classTimeAmount scope variable
   $scope.getNumberOfTurns = function getNumberOfTurns() {
@@ -427,7 +457,7 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', 'studentsService', 'rando
   // Each turn, process the effects on each turn.
   $scope.processTurn = function processTurn() {
     if (!$scope.turnActive) return;  // Terminal case
-    $scope.player.gameTime++;
+    GameTimeFactory.turn++;
     $scope.numberOfTurnsToTake--;
     $scope.updateStudents();
     $scope.setClassTimeRemaining(); // Update remaining class time
@@ -562,9 +592,6 @@ app.controller('ClassroomCtrl', ['$scope', '$timeout', 'studentsService', 'rando
   
 
 
-  /////////////////
-  // Util Functions
-  /////////////////
   
 
 }]);
