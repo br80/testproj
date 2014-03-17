@@ -103,14 +103,20 @@ app.service('studentsService', [function () {
         }
   };
 
-  this.getStudents = function() {
-
-    return this.students;
-  }
-
   this.getStudent = function(studentName) {
     return this.students[studentName];
-  }
+  };
+
+  this.studentTooltip = function(studentName) {
+    var student = this.getStudent(studentName);
+    var retArray = [];
+    retArray.push(student.name);
+    retArray.push('Math: ' + student.math);
+    retArray.push('Reading: ' + student.reading);
+    retArray.push('Writing: ' + student.writing);
+    retArray.push('Discipline: ' + student.discipline);
+    return retArray.join("\n");
+  };
 
 
 }]);
@@ -278,6 +284,10 @@ app.factory('GameTimeFactory', [function() {
 
     turn: currentTurn,
 
+    incrementTurn: function incrementTurn(amt) {
+      currentTurn += amt;
+    },
+
     // Generate time string from number of turns. Each day consists of 36 time units, representing 10 minutes each.
     getTime: function getTime() {
       var timeUnits = currentTurn % 36;
@@ -314,19 +324,20 @@ app.factory('GameTimeFactory', [function() {
 app.controller('ClassroomCtrl',
   ['$scope', '$timeout', 'studentsService', 'randomService', 'playerService', 'subjectsService', 'GameTimeFactory',
   function($scope,$timeout,studentsService,randomService,playerService,subjectsService, GameTimeFactory) {
-  // Dictionary with game and player variables
 
-  $scope.getPlayerName = function () {
+  // Get Player's Name
+  $scope.getPlayerName = function getPlayerName () {
     return playerService.playerName;
   }
 
-  $scope.getSubjects = function () {
+  // Get subjects dictionary
+  $scope.getSubjects = function getSubjects () {
     return subjectsService.subjects;
   }
 
-  // TODO: Does this need to be here?  Seems redundant.
-  $scope.getStudents = function() {
-    return studentsService.getStudents();
+  // Get students dictionary
+  $scope.getStudents = function getStudents () {
+    return studentsService.students;
   }
 
   
@@ -345,19 +356,10 @@ app.controller('ClassroomCtrl',
     var student = studentsService.getStudent($scope.modalStudentName);
     return student;
   }
-  
-
 
   // Generate tooltip text (shows stats)
   $scope.studentTooltip = function studentTooltip(studentName) {
-    var student = studentsService.getStudent(studentName);
-    var retArray = [];
-    retArray.push(student.name);
-    retArray.push('Math: ' + student.math);
-    retArray.push('Reading: ' + student.reading);
-    retArray.push('Writing: ' + student.writing);
-    retArray.push('Discipline: ' + student.discipline);
-    return retArray.join("\n");
+    return studentsService.studentTooltip(studentName);
   }
   
 
@@ -457,7 +459,7 @@ app.controller('ClassroomCtrl',
   // Each turn, process the effects on each turn.
   $scope.processTurn = function processTurn() {
     if (!$scope.turnActive) return;  // Terminal case
-    GameTimeFactory.turn++;
+    GameTimeFactory.incrementTurn(1);
     $scope.numberOfTurnsToTake--;
     $scope.updateStudents();
     $scope.setClassTimeRemaining(); // Update remaining class time
