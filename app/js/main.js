@@ -342,14 +342,14 @@ app.factory('GameActionFactory', ['randomService', function(randomService) {
         // Do nothing.  Troublesome students stay troublesome until you click their portrait.  
       }
       else if (randomService.randomRange(1,10) === 1) {
-        returnStudent[$scope.currentSubject.subject]++;
+        returnStudent[currentSubject.subject]++;
         returnStudent.face = 'Learning';
         returnStudent.faceIndex = 1;
       }
       else if (randomService.randomRange(1,20) === 2) {
-        returnStudent[$scope.currentSubject.subject]++;
+        returnStudent[currentSubject.subject]++;
         returnStudent.face = 'Trouble';
-        returnStudent.faceIndex = $scope.randomRange(1,3);
+        returnStudent.faceIndex = randomService.randomRange(1,3);
       }
       else {
         returnStudent.face = 'Working';
@@ -513,7 +513,7 @@ app.controller('ClassroomCtrl',
   $scope.getTime = function getTime() {return GameTimeFactory.getTime();}
 
   $scope.setClassTimeAmount = function setClassTimeAmount(amt) {
-    GameTimeFactory.setClassTimeAmount(amt);
+    $scope.classTimeAmount = GameTimeFactory.setClassTimeAmount(amt);
   }
   $scope.getClassTimeRemaining = function getClassTimeRemaining() {
     return GameTimeFactory.getClassTimeRemaining();
@@ -528,11 +528,11 @@ app.controller('ClassroomCtrl',
   $scope.selectActionButton = function selectActionButton(value) {
     var classTimeRemaining = GameTimeFactory.getClassTimeRemaining()
     if (value === 'exam') {
-      GameTimeFactory.setClassTimeAmount(classTimeRemaining[classTimeRemaining.length - 12]);
+      $scope.setClassTimeAmount(classTimeRemaining[classTimeRemaining.length - 12]);
     }
     else {
-      // TODO: Maybe this line can be deleted
-      GameTimeFactory.setClassTimeAmount(classTimeRemaining[0]);
+      // Commenting out the line below: This prevents time from updating when you select a button.
+      // GameTimeFactory.setClassTimeAmount(classTimeRemaining[0]);
     }
     $scope.classTimeAmount = GameTimeFactory.getClassTimeAmount();
   }
@@ -547,8 +547,8 @@ app.controller('ClassroomCtrl',
 
   // Get the number of turns from the classTimeAmount scope variable
   $scope.getNumberOfTurns = function getNumberOfTurns() {
-    var classTimeAmount = GameTimeFactory.getClassTimeAmount();
-    return (classTimeAmount.minutes / 10) + (classTimeAmount.hours * 6);
+    $scope.classTimeAmount = GameTimeFactory.getClassTimeAmount();
+    return ($scope.classTimeAmount.minutes / 10) + ($scope.classTimeAmount.hours * 6);
   }
 
   // Take the first turn and trigger the callback to take more turns
@@ -558,7 +558,7 @@ app.controller('ClassroomCtrl',
       // Start the action
       $scope.numberOfTurnsToTake = $scope.getNumberOfTurns();
       $scope.turnActive = true;
-      GameTimeFactory.setClassTimeAmount(classTimeRemaining[classTimeRemaining.length - $scope.numberOfTurnsToTake]);
+      $scope.setClassTimeAmount(classTimeRemaining[classTimeRemaining.length - $scope.numberOfTurnsToTake]);
       $scope.updateStudents();
       $timeout($scope.processTurn,1000);
     }
@@ -566,7 +566,7 @@ app.controller('ClassroomCtrl',
       // Stop the current action (when the "stop" button is hit)
       $scope.numberOfTurnsToTake = 0;
       $scope.turnActive = false;
-      GameTimeFactory.setClassTimeAmount(classTimeRemaining[0]);
+      $scope.setClassTimeAmount(classTimeRemaining[0]);
     }
   }
 
@@ -579,12 +579,11 @@ app.controller('ClassroomCtrl',
     GameTimeFactory.setClassTimeRemaining($scope.currentAction); // Update remaining class time
     var classTimeRemaining = GameTimeFactory.getClassTimeRemaining();
     if ($scope.numberOfTurnsToTake <= 0) {
-      $scope.classTimeAmount = classTimeRemaining[0];
+      $scope.setClassTimeAmount(classTimeRemaining[0]);
       $scope.turnActive = false;
     }
     else {
-      $scope.classTimeAmount = classTimeRemaining[classTimeRemaining.length - $scope.numberOfTurnsToTake];
-      GameTimeFactory.setClassTimeAmount(classTimeRemaining[classTimeRemaining.length - $scope.numberOfTurnsToTake]);
+      $scope.setClassTimeAmount(classTimeRemaining[classTimeRemaining.length - $scope.numberOfTurnsToTake]);
       $timeout($scope.processTurn,1000);  // Time per turn.  Should probably make this a variable at the top
     }
   }
