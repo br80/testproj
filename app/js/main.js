@@ -118,6 +118,16 @@ app.service('studentsService', [function () {
     return retArray.join("\n");
   };
 
+  // Return a student's portrait to neutral.
+  this.setStudentToNeutral = function setStudentToNeutral(student, faceIndex) {
+    var returnStudent = student;  // The value to return
+    if (returnStudent.face !== 'Trouble') {
+      returnStudent.face = 'Neutral';
+      returnStudent.faceIndex = faceIndex;
+    }
+    return returnStudent;
+  }
+
 
 }]);
 
@@ -280,6 +290,9 @@ app.factory('GameActionFactory', ['studentsService', function(studentsService) {
 app.factory('GameTimeFactory', [function() {
 
   var currentTurn = 0;
+  var classTimeAmount = [];  // The current time selection.  This is used for determining how long an action will be.
+  var classTimeRemaining = [];  // An array containing dictionaries of time amounts remaining in the day
+
   return {
 
     turn: currentTurn,
@@ -301,6 +314,57 @@ app.factory('GameTimeFactory', [function() {
 
     getDay: function getDay() {
       return Math.floor(currentTurn / 36 + 1);
+    },
+
+    getClassTimeAmount: function getClassTimeAmount() {return classTimeAmount;},
+    getClassTimeRemaining: function getClassTimeRemaining() {return classTimeRemaining;},
+
+
+    // There must be at least 2 hours in the day to have an exam
+    isThereTimeForExam: function isThereTimeForExam() {
+      return (classTimeRemaining.length >= 12);
+    },
+
+    setClassTimeRemaining: function setClassTimeRemaining(currentAction) {
+      var timeArray = [];
+      var timeUnits = currentTurn % 36;
+      var timeUnitsRemaining;
+      if (timeUnits < 24) {   // Before noon
+        timeUnitsRemaining = 24 - timeUnits;
+      }
+      else {      // After noon (12-1 is lunchtime and is not recorded).  The school day ends at 3pm.
+        timeUnitsRemaining = 36 - timeUnits;
+      }
+      while (timeUnitsRemaining > 0) {
+        // Calculate hours and minutes
+        var hours = Math.floor(timeUnitsRemaining / 6);
+        var minutes = 10 * (timeUnitsRemaining % 6);
+      
+        // Make string version of time values
+        var toStringArray = [];
+        if (hours > 0) toStringArray.push(hours + ' hour');
+        if (hours > 1) toStringArray.push('s');
+        if (minutes > 0) toStringArray.push(' ' + minutes + ' minutes');
+        timeArray.push({'hours': hours, 'minutes':minutes, 'toString': toStringArray.join("")}); // Push to time Array
+      
+        timeUnitsRemaining--;
+      }
+      if (currentAction === 'exam') {
+        classTimeAmount = timeArray[timeArray.length - 12];
+      }
+      else {
+        classTimeAmount = timeArray[0];
+      }
+      classTimeRemaining = timeArray;
+    },
+
+    // Getter and setter for classtime amount
+    getClassTimeAmount: function getClassTimeAmount() {
+      return classTimeAmount;
+    },
+    setClassTimeAmount: function setClassTimeAmount(amt) {
+      classTimeAmount = amt;
+      return amt;
     }
 
   };
@@ -371,58 +435,31 @@ app.controller('ClassroomCtrl',
   $scope.getDay = function getDay() {return GameTimeFactory.getDay();}
 
   // Each day consists of 36 time units, representing 10 minutes each.
-  $scope.getTime = function() {return GameTimeFactory.getTime();}
-  
-  // This will return an array with the number of hours remaining before lunch (if before noon) or the end of the day (if after noon)
-  $scope.setClassTimeRemaining = function setClassTimeRemaining() {
-    var timeArray = [];
-    var timeUnits = GameTimeFactory.turn % 36;
-    var timeUnitsRemaining;
-    if (timeUnits < 24) {   // Before noon
-      timeUnitsRemaining = 24 - timeUnits;
-    }
-    else {      // After noon (12-1 is lunchtime and is not recorded).  The school day ends at 3pm.
-      timeUnitsRemaining = 36 - timeUnits;
-    }
-    while (timeUnitsRemaining > 0) {
-      // Calculate hours and minutes
-      var hours = Math.floor(timeUnitsRemaining / 6);
-      var minutes = 10 * (timeUnitsRemaining % 6);
-      
-      // Make string version of time values
-      var toStringArray = [];
-      if (hours > 0) toStringArray.push(hours + ' hour');
-      if (hours > 1) toStringArray.push('s');
-      if (minutes > 0) toStringArray.push(' ' + minutes + ' minutes');
-      timeArray.push({'hours': hours, 'minutes':minutes, 'toString': toStringArray.join("")}); // Push to time Array
-      
-      timeUnitsRemaining--;
-    }
-    if ($scope.currentAction === 'exam') {
-      $scope.classTimeAmount = timeArray[timeArray.length - 12];
-    }
-    else {
-      $scope.classTimeAmount = timeArray[0];
-    }
-    $scope.classTimeRemaining = timeArray;
+  $scope.getTime = function getTime() {return GameTimeFactory.getTime();}
+
+  $scope.setClassTimeAmount = function setClassTimeAmount(amt) {
+    GameTimeFactory.setClassTimeAmount(amt);
   }
-  $scope.classTimeRemaining;  // An array containing dictionaries of time amounts remaining in the day
-  $scope.classTimeAmount;  // The current time selection.  This is used for determining how long an action will be.
-  $scope.setClassTimeRemaining();
+  $scope.getClassTimeRemaining = function getClassTimeRemaining() {
+    return GameTimeFactory.getClassTimeRemaining();
+  }
+  GameTimeFactory.setClassTimeRemaining($scope.currentAction);
+  $scope.classTimeAmount = GameTimeFactory.getClassTimeAmount();
   
   // There must be at least 2 hours in the day to have an exam
-  $scope.isThereTimeForExam = function isThereTimeForExam() {
-    return $scope.classTimeRemaining.length >= 12;
-  }
+  $scope.isThereTimeForExam = function isThereTimeForExam() {return GameTimeFactory.isThereTimeForExam();}
 
   // Handle time changes when radio buttons are selected
   $scope.selectActionButton = function selectActionButton(value) {
+    var classTimeRemaining = GameTimeFactory.getClassTimeRemaining()
     if (value === 'exam') {
-      $scope.classTimeAmount = $scope.classTimeRemaining[$scope.classTimeRemaining.length - 12];
+      GameTimeFactory.setClassTimeAmount(classTimeRemaining[classTimeRemaining.length - 12]);
     }
     else {
-      $scope.classTimeAmount = $scope.classTimeRemaining[0];
+      // TODO: Maybe this line can be deleted
+      GameTimeFactory.setClassTimeAmount(classTimeRemaining[0]);
     }
+    $scope.classTimeAmount = GameTimeFactory.getClassTimeAmount();
   }
 
 
@@ -431,28 +468,30 @@ app.controller('ClassroomCtrl',
   $scope.turnActive = false;  // This is true when a turn is taking place
   $scope.numberOfTurnsToTake = 0;  // This is set with getNumberOfTurns() when an action is taken
   $scope.currentAction = 'lecture';
-  $scope.currentSubject = subjectsService.subjects.math[0];  // FIXME: FIGURE OUT WHY THIS DOESN'T UPDATE!!!!!!!!!!!!!!
+  $scope.currentSubject = subjectsService.subjects.math[0];
 
   // Get the number of turns from the classTimeAmount scope variable
   $scope.getNumberOfTurns = function getNumberOfTurns() {
-    return ($scope.classTimeAmount.minutes / 10) + ($scope.classTimeAmount.hours * 6);
+    var classTimeAmount = GameTimeFactory.getClassTimeAmount();
+    return (classTimeAmount.minutes / 10) + (classTimeAmount.hours * 6);
   }
 
   // Take the first turn and trigger the callback to take more turns
   $scope.takeTurn = function takeTurn() {
+    var classTimeRemaining = GameTimeFactory.getClassTimeRemaining()
     if (!$scope.turnActive) {
       // Start the action
       $scope.numberOfTurnsToTake = $scope.getNumberOfTurns();
       $scope.turnActive = true;
-      $scope.classTimeAmount = $scope.classTimeRemaining[$scope.classTimeRemaining.length - $scope.numberOfTurnsToTake];
+      GameTimeFactory.setClassTimeAmount(classTimeRemaining[classTimeRemaining.length - $scope.numberOfTurnsToTake]);
       $scope.updateStudents();
       $timeout($scope.processTurn,1000);
     }
     else {
-      // Stop the current action
+      // Stop the current action (when the "stop" button is hit)
       $scope.numberOfTurnsToTake = 0;
       $scope.turnActive = false;
-      $scope.classTimeAmount = $scope.classTimeRemaining[0];
+      GameTimeFactory.setClassTimeAmount(classTimeRemaining[0]);
     }
   }
 
@@ -462,12 +501,15 @@ app.controller('ClassroomCtrl',
     GameTimeFactory.incrementTurn(1);
     $scope.numberOfTurnsToTake--;
     $scope.updateStudents();
-    $scope.setClassTimeRemaining(); // Update remaining class time
+    GameTimeFactory.setClassTimeRemaining($scope.currentAction); // Update remaining class time
+    var classTimeRemaining = GameTimeFactory.getClassTimeRemaining();
     if ($scope.numberOfTurnsToTake <= 0) {
+      $scope.classTimeAmount = classTimeRemaining[0];
       $scope.turnActive = false;
     }
     else {
-      $scope.classTimeAmount = $scope.classTimeRemaining[$scope.classTimeRemaining.length - $scope.numberOfTurnsToTake];
+      $scope.classTimeAmount = classTimeRemaining[classTimeRemaining.length - $scope.numberOfTurnsToTake];
+      GameTimeFactory.setClassTimeAmount(classTimeRemaining[classTimeRemaining.length - $scope.numberOfTurnsToTake]);
       $timeout($scope.processTurn,1000);  // Time per turn.  Should probably make this a variable at the top
     }
   }
@@ -484,7 +526,7 @@ app.controller('ClassroomCtrl',
   $scope.updateStudents = function updateStudents() {
     for (student in studentsService.students) {
       if ($scope.numberOfTurnsToTake <= 0) {
-        studentsService.students[student] = studentsService.setStudentToNeutral(studentsService.students[student]);
+        studentsService.students[student] = studentsService.setStudentToNeutral(studentsService.students[student], randomService.randomRange(1,3));
       }
       else if ($scope.currentAction === 'lecture') {
         studentsService.students[student] = $scope.doLectureTurn(studentsService.students[student]);  
@@ -567,16 +609,6 @@ app.controller('ClassroomCtrl',
     }
     else {
       returnStudent.face = 'Working';
-      returnStudent.faceIndex = randomService.randomRange(1,3);
-    }
-    return returnStudent;
-  }
-
-  // Return a student's portrait to neutral.
-  $scope.setStudentToNeutral = function setStudentToNeutral(student) {
-    var returnStudent = student;  // The value to return
-    if (returnStudent.face !== 'Trouble') {
-      returnStudent.face = 'Neutral';
       returnStudent.faceIndex = randomService.randomRange(1,3);
     }
     return returnStudent;

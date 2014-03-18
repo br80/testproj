@@ -25,7 +25,6 @@
    </modal-dialog>
    </div>
    
-
    <!--Name of the class-->
    <h1>{{getPlayerName()}}'s Class</h1>
    
@@ -34,7 +33,7 @@
    <h2>Day {{getDay()}}</h2>
    <h3>{{getTime()}}</h3>
    <hr></hr>
-   
+
    <!--
       ACTIONS
    ->
@@ -47,22 +46,20 @@
       </tr>
    </table>
 
-   
    <br></br>
    <!--Select the action-->
    <input type="radio" ng-model="currentAction" value="lecture" ng-change="selectActionButton(currentAction)" ng-disabled="turnActive"> Lecture</br>
    <input type="radio" ng-model="currentAction" value="classwork" ng-change="selectActionButton(currentAction)" ng-disabled="turnActive"> Classwork</br>
    <div ng-show="isThereTimeForExam()"><input type="radio" ng-model="currentAction" value="exam" ng-change="selectActionButton(currentAction)" ng-disabled="turnActive"> Exam</input></div>
    <div ng-show="!isThereTimeForExam()"><input type="radio" ng-model="currentAction" value="no-exam" ng-disabled="true"> Exam (not enough time)</input></div>
-   
+
 
    <!--Time of action-->
-
    <div >
       <div></div>
       <span>
          Time: 
-         <select ng-model="classTimeAmount" ng-options="time.toString for time in classTimeRemaining" ng-disabled=(turnActive||currentAction=='exam')>
+         <select ng-model="classTimeAmount" ng-change="{{setClassTimeAmount(classTimeAmount)}}" ng-options="time.toString for time in getClassTimeRemaining()" ng-disabled=(turnActive||currentAction=='exam')>
          </select>
       </span>
    </div>
