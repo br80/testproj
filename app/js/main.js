@@ -44,7 +44,7 @@ app.service('randomService', function() {
 
 
 // Service that handles students
-app.service('studentsService', [function () {
+app.service('studentsService', ['randomService', function (randomService) {
 
   this.students = {
         'Riley': {
@@ -119,11 +119,11 @@ app.service('studentsService', [function () {
   };
 
   // Return a student's portrait to neutral.
-  this.setStudentToNeutral = function setStudentToNeutral(student, faceIndex) {
+  this.setStudentToNeutral = function setStudentToNeutral(student) {
     var returnStudent = student;  // The value to return
     if (returnStudent.face !== 'Trouble') {
       returnStudent.face = 'Neutral';
-      returnStudent.faceIndex = faceIndex;
+      returnStudent.faceIndex = randomService.randomRange(1,3);
     }
     return returnStudent;
   }
@@ -275,14 +275,91 @@ app.factory('ModalDialogFactory', [function(studentsService) {
 }]);
 
 
-app.factory('GameActionFactory', ['studentsService', function(studentsService) {
+app.factory('GameActionFactory', ['randomService', function(randomService) {
 
   return {
     testFactoryFunction: function () {
       return "RETURN!!!";
+    },
+
+
+    // TODO: Make all of these functions have better learning heuristics
+  
+    // Process the effects on a student when they are listening to a lecture.  This algorithm is temporary.
+    doLectureTurn: function doLectureTurn(student, currentSubject) {
+     var returnStudent = student;  // The value to return
+     if (returnStudent.face === 'Trouble') {
+       // Do nothing.  Troublesome students stay troublesome until you click their portrait.  
+     }
+     else if (randomService.randomRange(1,10) === 1) {
+       returnStudent[currentSubject.subject]++;
+       returnStudent.face = 'Learning';
+       returnStudent.faceIndex = 1;
+     }
+     else if (randomService.randomRange(1,10) === 2) {
+       returnStudent[currentSubject.subject]++;
+       returnStudent.face = 'Trouble';
+       returnStudent.faceIndex = randomService.randomRange(1,3);
+     }
+     else {
+       returnStudent.face = 'Neutral';
+       returnStudent.faceIndex = randomService.randomRange(1,3);
+     }
+     return returnStudent;
+    },
+
+
+
+  
+
+    // Process the effects on a student when they are doing classwork.  This algorithm is temporary.
+    doClassworkTurn: function doClassworkTurn(student, currentSubject) {
+      var returnStudent = student;  // The value to return
+      if (returnStudent.face === 'Trouble') {
+        // Do nothing.  Troublesome students stay troublesome until you click their portrait.  
+      }
+      else if (randomService.randomRange(1,10) === 1) {
+        returnStudent[currentSubject.subject]++;
+        returnStudent.face = 'Learning';
+        returnStudent.faceIndex = 1;
+      }
+      else if (randomService.randomRange(1,10) === 2) {
+        returnStudent[currentSubject.subject]++;
+        returnStudent.face = 'Trouble';
+        returnStudent.faceIndex = randomService.randomRange(1,3);
+      }
+      else {
+        returnStudent.face = 'Working';
+        returnStudent.faceIndex = randomService.randomRange(1,3);
+      }
+      return returnStudent;
+    },
+
+    // Process the effects on a student when they are doing an exam.  This algorithm is temporary.
+    doExamTurn: function doExamTurn(student, currentSubject) {
+      var returnStudent = student;  // The value to return
+      if (returnStudent.face === 'Trouble') {
+        // Do nothing.  Troublesome students stay troublesome until you click their portrait.  
+      }
+      else if (randomService.randomRange(1,10) === 1) {
+        returnStudent[$scope.currentSubject.subject]++;
+        returnStudent.face = 'Learning';
+        returnStudent.faceIndex = 1;
+      }
+      else if (randomService.randomRange(1,20) === 2) {
+        returnStudent[$scope.currentSubject.subject]++;
+        returnStudent.face = 'Trouble';
+        returnStudent.faceIndex = $scope.randomRange(1,3);
+      }
+      else {
+        returnStudent.face = 'Working';
+        returnStudent.faceIndex = randomService.randomRange(1,3);
+      }
+      return returnStudent;
     }
 
   }
+
 }]);
 
 
@@ -349,7 +426,7 @@ app.factory('GameTimeFactory', [function() {
       
         timeUnitsRemaining--;
       }
-      if (currentAction === 'exam') {
+      if (currentAction === 'exam') {// TODO: FIX THIS!!!!!!!!!!
         classTimeAmount = timeArray[timeArray.length - 12];
       }
       else {
@@ -386,8 +463,8 @@ app.factory('GameTimeFactory', [function() {
 
 
 app.controller('ClassroomCtrl',
-  ['$scope', '$timeout', 'studentsService', 'randomService', 'playerService', 'subjectsService', 'GameTimeFactory',
-  function($scope,$timeout,studentsService,randomService,playerService,subjectsService, GameTimeFactory) {
+  ['$scope', '$timeout', 'studentsService', 'randomService', 'playerService', 'subjectsService', 'GameTimeFactory', 'GameActionFactory',
+  function($scope,$timeout,studentsService,randomService,playerService,subjectsService, GameTimeFactory, GameActionFactory) {
 
   // Get Player's Name
   $scope.getPlayerName = function getPlayerName () {
@@ -403,8 +480,6 @@ app.controller('ClassroomCtrl',
   $scope.getStudents = function getStudents () {
     return studentsService.students;
   }
-
-  
   
   $scope.modalShown = false;
   $scope.modalStudentName = 'test';
@@ -521,21 +596,21 @@ app.controller('ClassroomCtrl',
     else
       return 'Stop';
   }
-  
+
   // When turns are being taken, update student entries accordingly
   $scope.updateStudents = function updateStudents() {
     for (student in studentsService.students) {
       if ($scope.numberOfTurnsToTake <= 0) {
-        studentsService.students[student] = studentsService.setStudentToNeutral(studentsService.students[student], randomService.randomRange(1,3));
+        studentsService.students[student] = studentsService.setStudentToNeutral(studentsService.students[student]);
       }
       else if ($scope.currentAction === 'lecture') {
-        studentsService.students[student] = $scope.doLectureTurn(studentsService.students[student]);  
+        studentsService.students[student] = GameActionFactory.doLectureTurn(studentsService.students[student], $scope.currentSubject);  
       }
       else if ($scope.currentAction === 'classwork') {
-        studentsService.students[student] = $scope.doClassworkTurn(studentsService.students[student]);
+        studentsService.students[student] = GameActionFactory.doClassworkTurn(studentsService.students[student], $scope.currentSubject);
       }
       else if ($scope.currentAction === 'exam') {
-        studentsService.students[student] = $scope.doExamTurn(studentsService.students[student]);
+        studentsService.students[student] = GameActionFactory.doExamTurn(studentsService.students[student], $scope.currentSubject);
       }
       else {
         // pass
@@ -543,76 +618,6 @@ app.controller('ClassroomCtrl',
     }  
   }
   
-  // TODO: Make all of these functions have better learning heuristics
-  
-  // Process the effects on a student when they are listening to a lecture.  This algorithm is temporary.
-  $scope.doLectureTurn = function doLectureTurn(student) {
-    var returnStudent = student;  // The value to return
-    if (returnStudent['face'] === 'Trouble') {
-      // Do nothing.  Troublesome students stay troublesome until you click their portrait.  
-    }
-    else if (randomService.randomRange(1,10) === 1) {
-      returnStudent[$scope.currentSubject.subject]++;
-      returnStudent.face = 'Learning';
-      returnStudent.faceIndex = 1;
-    }
-    else if (randomService.randomRange(1,10) === 2) {
-      returnStudent[$scope.currentSubject.subject]++;
-      returnStudent.face = 'Trouble';
-      returnStudent.faceIndex = randomService.randomRange(1,3);
-    }
-    else {
-      returnStudent.face = 'Neutral';
-      returnStudent.faceIndex = randomService.randomRange(1,3);
-    }
-    return returnStudent;
-  }
-
-  // Process the effects on a student when they are doing classwork.  This algorithm is temporary.
-  $scope.doClassworkTurn = function doClassworkTurn(student) {
-    var returnStudent = student;  // The value to return
-    if (returnStudent.face === 'Trouble') {
-      // Do nothing.  Troublesome students stay troublesome until you click their portrait.  
-    }
-    else if (randomService.randomRange(1,10) === 1) {
-      returnStudent[$scope.currentSubject.subject]++;
-      returnStudent.face = 'Learning';
-      returnStudent.faceIndex = 1;
-    }
-    else if (randomService.randomRange(1,10) === 2) {
-      returnStudent[$scope.currentSubject.subject]++;
-      returnStudent.face = 'Trouble';
-      returnStudent.faceIndex = randomService.randomRange(1,3);
-    }
-    else {
-      returnStudent.face = 'Working';
-      returnStudent.faceIndex = randomService.randomRange(1,3);
-    }
-    return returnStudent;
-  }
-
-  // Process the effects on a student when they are doing an exam.  This algorithm is temporary.
-  $scope.doExamTurn = function doExamTurn(student) {
-    var returnStudent = student;  // The value to return
-    if (returnStudent.face === 'Trouble') {
-      // Do nothing.  Troublesome students stay troublesome until you click their portrait.  
-    }
-    else if (randomService.randomRange(1,10) === 1) {
-      returnStudent[$scope.currentSubject.subject]++;
-      returnStudent.face = 'Learning';
-      returnStudent.faceIndex = 1;
-    }
-    else if (randomService.randomRange(1,20) === 2) {
-      returnStudent[$scope.currentSubject.subject]++;
-      returnStudent.face = 'Trouble';
-      returnStudent.faceIndex = $scope.randomRange(1,3);
-    }
-    else {
-      returnStudent.face = 'Working';
-      returnStudent.faceIndex = randomService.randomRange(1,3);
-    }
-    return returnStudent;
-  }
 
   // When a student is making trouble and they are clicked, return them to neutral.
   $scope.handlePortraitClick = function handlePortraitClick(studentName) {
