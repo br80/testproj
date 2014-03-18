@@ -118,8 +118,8 @@ app.service('studentsService', ['randomService', function (randomService) {
     return retArray.join("\n");
   };
 
-  // Return a student's portrait to neutral.
-  this.setStudentToNeutral = function setStudentToNeutral(student) {
+  // Return a student's portrait to neutral iff the student is not being troublesome
+  this.finishWorking = function finishWorking(student) {
     var returnStudent = student;  // The value to return
     if (returnStudent.face !== 'Trouble') {
       returnStudent.face = 'Neutral';
@@ -127,6 +127,17 @@ app.service('studentsService', ['randomService', function (randomService) {
     }
     return returnStudent;
   }
+
+   // When a troublesome student is caught, return them to neutral
+  this.catchTroublesomeStudent = function catchTroublesomeStudent(studentName) {
+    var student = this.students[studentName];
+    if (student.face === 'Trouble') {
+      // Make the student non-troublesome
+      student.face = 'Neutral';
+      student.faceIndex = randomService.randomRange(1,3);
+    }
+  }
+
 
 
 }]);
@@ -277,11 +288,8 @@ app.factory('ModalDialogFactory', [function(studentsService) {
 
 app.factory('GameActionFactory', ['randomService', function(randomService) {
 
-  return {
-    testFactoryFunction: function () {
-      return "RETURN!!!";
-    },
 
+  return {
 
     // TODO: Make all of these functions have better learning heuristics
   
@@ -426,7 +434,7 @@ app.factory('GameTimeFactory', [function() {
       
         timeUnitsRemaining--;
       }
-      if (currentAction === 'exam') {// TODO: FIX THIS!!!!!!!!!!
+      if (currentAction === 'exam') {
         classTimeAmount = timeArray[timeArray.length - 12];
       }
       else {
@@ -434,6 +442,15 @@ app.factory('GameTimeFactory', [function() {
       }
       classTimeRemaining = timeArray;
     },
+
+
+    // Get the number of turns from the classTimeAmount scope variable
+    getNumberOfTurns: function getNumberOfTurns() {
+      classTimeAmount = classTimeAmount;
+      return (classTimeAmount.minutes / 10) + (classTimeAmount.hours * 6);
+    },
+
+
 
     // Getter and setter for classtime amount
     getClassTimeAmount: function getClassTimeAmount() {
@@ -465,6 +482,9 @@ app.factory('GameTimeFactory', [function() {
 app.controller('ClassroomCtrl',
   ['$scope', '$timeout', 'studentsService', 'randomService', 'playerService', 'subjectsService', 'GameTimeFactory', 'GameActionFactory',
   function($scope,$timeout,studentsService,randomService,playerService,subjectsService, GameTimeFactory, GameActionFactory) {
+
+  // REMOVE ME!!!!!!!!!!!
+  $scope.debugvar = "REMOVE ME";
 
   // Get Player's Name
   $scope.getPlayerName = function getPlayerName () {
@@ -540,24 +560,19 @@ app.controller('ClassroomCtrl',
 
 
   // Action functions
-  $scope.turnActive = false;  // This is true when a turn is taking place
+  $scope.turnActive = false;
+
   $scope.numberOfTurnsToTake = 0;  // This is set with getNumberOfTurns() when an action is taken
   $scope.currentAction = 'lecture';
   $scope.currentSubject = subjectsService.subjects.math[0];
-
-  // Get the number of turns from the classTimeAmount scope variable
-  $scope.getNumberOfTurns = function getNumberOfTurns() {
-    $scope.classTimeAmount = GameTimeFactory.getClassTimeAmount();
-    return ($scope.classTimeAmount.minutes / 10) + ($scope.classTimeAmount.hours * 6);
-  }
 
   // Take the first turn and trigger the callback to take more turns
   $scope.takeTurn = function takeTurn() {
     var classTimeRemaining = GameTimeFactory.getClassTimeRemaining()
     if (!$scope.turnActive) {
       // Start the action
-      $scope.numberOfTurnsToTake = $scope.getNumberOfTurns();
-      $scope.turnActive = true;
+      $scope.numberOfTurnsToTake = GameTimeFactory.getNumberOfTurns();
+      GameActionFactory.setTurnActive(true);
       $scope.setClassTimeAmount(classTimeRemaining[classTimeRemaining.length - $scope.numberOfTurnsToTake]);
       $scope.updateStudents();
       $timeout($scope.processTurn,1000);
@@ -600,7 +615,7 @@ app.controller('ClassroomCtrl',
   $scope.updateStudents = function updateStudents() {
     for (student in studentsService.students) {
       if ($scope.numberOfTurnsToTake <= 0) {
-        studentsService.students[student] = studentsService.setStudentToNeutral(studentsService.students[student]);
+        studentsService.students[student] = studentsService.finishWorking(studentsService.students[student]);
       }
       else if ($scope.currentAction === 'lecture') {
         studentsService.students[student] = GameActionFactory.doLectureTurn(studentsService.students[student], $scope.currentSubject);  
@@ -620,12 +635,7 @@ app.controller('ClassroomCtrl',
 
   // When a student is making trouble and they are clicked, return them to neutral.
   $scope.handlePortraitClick = function handlePortraitClick(studentName) {
-    var student = studentsService.students[studentName];
-    if (student.face === 'Trouble') {
-      // Make the student non-troublesome
-      student.face = 'Neutral';
-      student.faceIndex = randomService.randomRange(1,3);
-    }
+    studentsService.catchTroublesomeStudent(studentName);
   }
   
 

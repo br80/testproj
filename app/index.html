@@ -53,7 +53,6 @@
    <div ng-show="isThereTimeForExam()"><input type="radio" ng-model="currentAction" value="exam" ng-change="selectActionButton(currentAction)" ng-disabled="turnActive"> Exam</input></div>
    <div ng-show="!isThereTimeForExam()"><input type="radio" ng-model="currentAction" value="no-exam" ng-disabled="true"> Exam (not enough time)</input></div>
 
-
    <!--Time of action-->
    <div >
       <div></div>
@@ -86,6 +85,7 @@
 
 
 
+<h1>REMOVE ME: {{debugvar}}</h1>
 
 
 
