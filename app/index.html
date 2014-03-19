@@ -25,43 +25,40 @@
    </modal-dialog>
    </div>
    
-
    <!--Name of the class-->
-   <h1>{{player.name}}'s Class</h1>
+   <h1>{{getPlayerName()}}'s Class</h1>
    
    <hr></hr>
    <!--Display the time-->
    <h2>Day {{getDay()}}</h2>
    <h3>{{getTime()}}</h3>
    <hr></hr>
-   
-   <!------------------------------------- 
+
+   <!--
       ACTIONS
-   --------------------------------------->
-   <!--Select the subject-->
+   ->
+   <!Select the subject-->
    <table>
-      <tr ng-repeat="subject in subjects">
+      <tr ng-repeat="subject in getSubjects()">
          <td ng-repeat="section in subject">
-            <input type="radio" ng-model="currentSubject" name="subjectGrouping" ng-value="section" ng-disabled="!section.active">{{section.name}}</input>
+            <input type="radio" ng-model="$parent.$parent.currentSubject" name="subjectGrouping" ng-value="section" ng-disabled="!section.active">{{section.name}}</input>
          </td>
       </tr>
    </table>
-   <font size="2" color="blue">Note: The subject doesn't update...  Selecting different subjects should change this variable: [{{currentSubject}}] but it doesn't.</font>
-   
+
    <br></br>
    <!--Select the action-->
    <input type="radio" ng-model="currentAction" value="lecture" ng-change="selectActionButton(currentAction)" ng-disabled="turnActive"> Lecture</br>
    <input type="radio" ng-model="currentAction" value="classwork" ng-change="selectActionButton(currentAction)" ng-disabled="turnActive"> Classwork</br>
    <div ng-show="isThereTimeForExam()"><input type="radio" ng-model="currentAction" value="exam" ng-change="selectActionButton(currentAction)" ng-disabled="turnActive"> Exam</input></div>
    <div ng-show="!isThereTimeForExam()"><input type="radio" ng-model="currentAction" value="no-exam" ng-disabled="true"> Exam (not enough time)</input></div>
-   
-   <!--Time of action-->
 
+   <!--Time of action-->
    <div >
       <div></div>
       <span>
          Time: 
-         <select ng-model="classTimeAmount" ng-options="time.toString for time in classTimeRemaining" ng-disabled=(turnActive||currentAction=='exam')>
+         <select ng-model="classTimeAmount" ng-change="{{setClassTimeAmount(classTimeAmount)}}" ng-options="time.toString for time in getClassTimeRemaining()" ng-disabled=(turnActive||currentAction=='exam')>
          </select>
       </span>
    </div>
@@ -71,11 +68,9 @@
    <hr></hr>
    
    <!--Make table containing student portraits-->
-   <br></br>
-   <font size="3" color="red" ng-show="turnActive">(hint: If you catch students goofing off, click their portraits to get them back on task!)</font>
    <table>
    <tr>
-      <td ng-repeat="student in students">
+      <td ng-repeat="student in getStudents()">
          <h3 ng-click="toggleModal(student.name)">{{student.name}}</h3>
          <img  ng-src="img/Face_{{student.face}}_{{student.faceIndex}}.jpg" title="{{studentTooltip(student.name)}}" ng-click="handlePortraitClick(student.name)"></img>
          <br></br>Math: {{student.math}}
@@ -85,9 +80,12 @@
       </td>
    </tr>
    </table>
+   <br></br>
+   <font size="3" color="red" ng-show="turnActive">(hint: If you catch students goofing off, click their portraits to get them back on task!)</font>
 
 
 
+<h1>REMOVE ME: {{debugvar}}</h1>
 
 
 
