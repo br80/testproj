@@ -103,11 +103,11 @@ app.service('studentsService', ['randomService', function (randomService) {
         }
   };
 
-  this.getStudent = function(studentName) {
+  this.getStudent = function getStudent(studentName) {
     return this.students[studentName];
   };
 
-  this.studentTooltip = function(studentName) {
+  this.studentTooltip = function studentTooltip(studentName) {
     var student = this.getStudent(studentName);
     var retArray = [];
     retArray.push(student.name);
@@ -136,8 +136,8 @@ app.service('studentsService', ['randomService', function (randomService) {
       student.face = 'Neutral';
       student.faceIndex = randomService.randomRange(1,3);
     }
+    return student;
   }
-
 
 
 }]);
@@ -380,7 +380,9 @@ app.factory('GameTimeFactory', [function() {
 
   return {
 
-    turn: currentTurn,
+    getTurn: function getTurn() {
+      return currentTurn;
+    },
 
     incrementTurn: function incrementTurn(amt) {
       currentTurn += amt;
@@ -407,6 +409,7 @@ app.factory('GameTimeFactory', [function() {
 
     // There must be at least 2 hours in the day to have an exam
     isThereTimeForExam: function isThereTimeForExam() {
+      this.setClassTimeRemaining(null);  // Initial case
       return (classTimeRemaining.length >= 12);
     },
 
@@ -463,12 +466,6 @@ app.factory('GameTimeFactory', [function() {
 
   };
 }]);
-
-
-
-
-
-
 
 
 
@@ -572,7 +569,7 @@ app.controller('ClassroomCtrl',
     if (!$scope.turnActive) {
       // Start the action
       $scope.numberOfTurnsToTake = GameTimeFactory.getNumberOfTurns();
-      GameActionFactory.setTurnActive(true);
+      $scope.turnActive = true;
       $scope.setClassTimeAmount(classTimeRemaining[classTimeRemaining.length - $scope.numberOfTurnsToTake]);
       $scope.updateStudents();
       $timeout($scope.processTurn,1000);
@@ -618,7 +615,7 @@ app.controller('ClassroomCtrl',
         studentsService.students[student] = studentsService.finishWorking(studentsService.students[student]);
       }
       else if ($scope.currentAction === 'lecture') {
-        studentsService.students[student] = GameActionFactory.doLectureTurn(studentsService.students[student], $scope.currentSubject);  
+        studentsService.students[student] = GameActionFactory.doLectureTurn(studentsService.students[student], $scope.currentSubject); 
       }
       else if ($scope.currentAction === 'classwork') {
         studentsService.students[student] = GameActionFactory.doClassworkTurn(studentsService.students[student], $scope.currentSubject);
