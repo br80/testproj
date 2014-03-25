@@ -3,10 +3,14 @@
 <head lang="en">
   <meta charset="utf-8">
   <title>SimEdu</title>
+  <!--
   <link rel="stylesheet" href="vendor/foundation/foundation.min.css">
   <link rel="stylesheet" href="modal.css">
-  <script type="text/javascript" src="lib/angular/angular.js"></script>
-  <script type="text/javascript" src="js/main.js"></script>
+  -->
+  <%= yield %>
+
+
+
 </head>
 <body>
 
@@ -72,7 +76,7 @@
    <tr>
       <td ng-repeat="student in getStudents()">
          <h3 ng-click="toggleModal(student.name)">{{student.name}}</h3>
-         <img  ng-src="img/Face_{{student.face}}_{{student.faceIndex}}.jpg" title="{{studentTooltip(student.name)}}" ng-click="handlePortraitClick(student.name)"></img>
+         <img ng-src="img/Face_{{student.face}}_{{student.faceIndex}}.jpg" title="{{studentTooltip(student.name)}}" ng-click="handlePortraitClick(student.name)"></img>
          <br></br>Math: {{student.math}}
          <br></br>Reading: {{student.reading}}
          <br></br>Writing: {{student.writing}}
@@ -86,9 +90,12 @@
 
 
 
+
+
    </div>
   </div>
 
 </body>
 </html>
+
 

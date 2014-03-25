@@ -1,4 +1,10 @@
 Testproj::Application.routes.draw do
+    scope :api do
+    get "/users(.:format)" => "users#index"
+  end
+  root to: "home#index"
+
+
   resources :microposts
 
   resources :users
