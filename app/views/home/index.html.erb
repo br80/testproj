@@ -62,7 +62,7 @@
       <div></div>
       <span>
          Time: 
-         <select ng-model="classTimeAmount" ng-change="setClassTimeAmount(classTimeAmount)" ng-options="time.toString for time in getClassTimeRemaining()" ng-disabled=(turnActive||currentAction=='exam')>
+         <select ng-model="classTimeAmountString" ng-change="setClassTimeAmountByString(classTimeAmountString)" ng-options="time for time in getClassTimeStringsRemaining()" ng-disabled=(turnActive||currentAction=='exam')>
          </select>
       </span>
    </div>
@@ -89,7 +89,7 @@
 
 
 
-
+<h1>REMOVE ME: {{debugvar}}</h1>
 
 
    </div>

@@ -449,7 +449,6 @@ app.factory('GameTimeFactory', [function() {
 
     // Get the number of turns from the classTimeAmount scope variable
     getNumberOfTurns: function getNumberOfTurns() {
-      classTimeAmount = classTimeAmount;
       return (classTimeAmount.minutes / 10) + (classTimeAmount.hours * 6);
     },
 
@@ -460,8 +459,17 @@ app.factory('GameTimeFactory', [function() {
       return classTimeAmount;
     },
     setClassTimeAmount: function setClassTimeAmount(amt) {
-      classTimeAmount = amt;
-      return amt;
+      classTimeAmount = amt
+      return classTimeAmount;
+    },
+    setClassTimeAmountByString: function setClassTimeAmountByString(amtString) {
+      for (entry in classTimeRemaining) {
+        if (amtString === classTimeRemaining[entry].toString)
+        {
+          classTimeAmount = classTimeRemaining[entry];
+        }
+      }
+      return classTimeAmount;
     }
 
   };
@@ -532,11 +540,21 @@ app.controller('ClassroomCtrl',
   $scope.setClassTimeAmount = function setClassTimeAmount(amt) {
     $scope.classTimeAmount = GameTimeFactory.setClassTimeAmount(amt);
   }
-  $scope.getClassTimeRemaining = function getClassTimeRemaining() {
-    return GameTimeFactory.getClassTimeRemaining();
+  $scope.setClassTimeAmountByString = function setClassTimeAmountByString(amtString) {
+    $scope.classTimeAmount = GameTimeFactory.setClassTimeAmountByString(amtString);
+  }
+  $scope.getClassTimeStringsRemaining = function getClassTimeStringsRemaining() {
+    var classTimeStrings = [];
+    var classTimeRemainingArray = GameTimeFactory.getClassTimeRemaining();
+    for (classTime in classTimeRemainingArray) {
+      classTimeStrings.push(classTimeRemainingArray[classTime].toString);
+    }
+    return classTimeStrings;
   }
   GameTimeFactory.setClassTimeRemaining($scope.currentAction);
   $scope.classTimeAmount = GameTimeFactory.getClassTimeAmount();
+  $scope.classTimeAmountString = $scope.classTimeAmount.toString;
+
   
   // There must be at least 2 hours in the day to have an exam
   $scope.isThereTimeForExam = function isThereTimeForExam() {return GameTimeFactory.isThereTimeForExam();}
@@ -565,7 +583,8 @@ app.controller('ClassroomCtrl',
 
   // Take the first turn and trigger the callback to take more turns
   $scope.takeTurn = function takeTurn() {
-    var classTimeRemaining = GameTimeFactory.getClassTimeRemaining()
+    var classTimeRemaining = GameTimeFactory.getClassTimeRemaining();
+      $scope.debugvar =GameTimeFactory.getClassTimeAmount();;
     if (!$scope.turnActive) {
       // Start the action
       $scope.numberOfTurnsToTake = GameTimeFactory.getNumberOfTurns();
