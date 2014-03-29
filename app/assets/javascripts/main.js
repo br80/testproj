@@ -375,7 +375,7 @@ app.factory('GameActionFactory', ['randomService', function(randomService) {
 app.factory('GameTimeFactory', [function() {
 
   var currentTurn = 0;
-  var classTimeAmount = [];  // The current time selection.  This is used for determining how long an action will be.
+  var classTimeAmount = null;  // The current time selection.  This is used for determining how long an action will be.
   var classTimeRemaining = [];  // An array containing dictionaries of time amounts remaining in the day
 
   return {
@@ -440,7 +440,7 @@ app.factory('GameTimeFactory', [function() {
       if (currentAction === 'exam') {
         classTimeAmount = timeArray[timeArray.length - 12];
       }
-      else {
+      else if (classTimeAmount === null) { // Uninitialized
         classTimeAmount = timeArray[0];
       }
       classTimeRemaining = timeArray;
@@ -459,7 +459,7 @@ app.factory('GameTimeFactory', [function() {
       return classTimeAmount;
     },
     setClassTimeAmount: function setClassTimeAmount(amt) {
-      classTimeAmount = amt
+      classTimeAmount = amt;
       return classTimeAmount;
     },
     setClassTimeAmountByString: function setClassTimeAmountByString(amtString) {
@@ -488,7 +488,7 @@ app.controller('ClassroomCtrl',
   ['$scope', '$timeout', 'studentsService', 'randomService', 'playerService', 'subjectsService', 'GameTimeFactory', 'GameActionFactory',
   function($scope,$timeout,studentsService,randomService,playerService,subjectsService, GameTimeFactory, GameActionFactory) {
 
-  // REMOVE ME!!!!!!!!!!!
+  // Debug var
   $scope.debugvar = "REMOVE ME";
 
   // Get Player's Name

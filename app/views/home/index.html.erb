@@ -17,7 +17,7 @@
   <div ng-app="myApp">
    <div ng-controller="ClassroomCtrl">
    
-   
+ <!-- Remove Modal dialog
    <div>
    <modal-dialog show='modalShown' width='400px' height='60%'>
       <h2>{{modalStudentName}}</h2>
@@ -28,6 +28,7 @@
          <br></br>Discipline: {{getModalStudent()["discipline"]}}
    </modal-dialog>
    </div>
+-->
    
    <!--Name of the class-->
    <h1>{{getPlayerName()}}'s Class</h1>
@@ -85,12 +86,12 @@
    </tr>
    </table>
    <br></br>
-   <font size="3" color="red" ng-show="turnActive">(hint: If you catch students goofing off, click their portraits to get them back on task!)</font>
+   <font size="3" color="red" ng-show="turnActive">(If you catch students goofing off, click their portraits to get them back on task!)</font>
 
 
-
+<!--
 <h1>REMOVE ME: {{debugvar}}</h1>
-
+-->
 
    </div>
   </div>
