@@ -156,6 +156,7 @@ app.service('studentsService', ['randomService', function (randomService) {
 app.service('playerService', [function () {
 
   this.playerName = "Default";
+  this.playerId = 0;
 
 }]);
 
@@ -534,20 +535,25 @@ app.controller('ClassroomCtrl',
   // Debug var
   $scope.debugvar = "REMOVE ME";
 
-
+  $scope.initialized = false;
   // Set all the player variables
   $scope.setUser = function setUser(userJson)
   {
-    playerService.playerName = userJson.name;
-    GameTimeFactory.setTurn(userJson.turn);
-    subjectsService.setSubjects(userJson.subjects);
-    studentsService.setStudents(userJson.students);
+    if(!$scope.initialized) {
+      playerService.playerName = userJson.name;
+      playerService.playerId = userJson.id;
+      GameTimeFactory.setTurn(userJson.turn);
+      subjectsService.setSubjects(userJson.subjects);
+      studentsService.setStudents(userJson.students);
+      $scope.initialized = true;
+    }
   }
 
   // Get the Json string representing the user
   $scope.getUser = function getUser() {
     var userJson = {};
     userJson.name = playerService.playerName;
+    userJson.id = playerService.playerId;
     userJson.turn = GameTimeFactory.getTurn();
     userJson.subjects = subjectsService.subjects;
     userJson.students = studentsService.students;
@@ -562,6 +568,9 @@ app.controller('ClassroomCtrl',
   // Get Player's Name
   $scope.getPlayerName = function getPlayerName () {
     return playerService.playerName;
+  }
+  $scope.getPlayerId = function getPlayerId () {
+    return playerService.playerId;
   }
 
   // Get subjects dictionary

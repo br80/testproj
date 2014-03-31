@@ -22,6 +22,7 @@
 
    <!--Set user variables-->
    {{setUser(<%= @user.to_json %>)}}
+   <%= @user.to_json %>
 
    <!--Name of the class-->
    <h1>{{getPlayerName()}}'s Class</h1>
@@ -86,6 +87,40 @@
 <!--
 <h1>REMOVE ME: {{debugvar}}</h1>
 -->
+<%= form_for(@user) do |f| %>
+  <% if @user.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+      <ul>
+      <% @user.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <label for="user_name">Name</label><br>
+    <input id="user_name" name="user[name]" type="text" value="{{getPlayerName()}}" />
+  </div>
+  <div class="field">
+    <label for="user_turn">Turn</label><br>
+    <input id="user_turn" name="user[turn]" type="text" value="{{getTurn()+1}}"/>
+  </div>
+  <div class="field">
+    <label for="user_email">Email</label><br>
+    <input id="user_email" name="user[email]" type="text" value=""/>
+  </div>
+  <div class="field">
+    <label for="user_students">Students</label><br>
+    <input id="user_students" name="user[students]" type="text" value="{{getStudents()}}"/>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
+
 
    </div>
   </div>
@@ -101,3 +136,18 @@
 
 
 
+
+
+
+<p>
+  <strong>Name:</strong>
+  <%= @user.name %>
+</p>
+
+<p>
+  <strong>Email:</strong>
+  <%= @user.email %>
+</p>
+
+<%= link_to 'Edit', edit_user_path(@user) %> |
+<%= link_to 'Back', users_path %>
