@@ -2,7 +2,8 @@ Testproj::Application.routes.draw do
     scope :api do
     get "/users(.:format)" => "users#index"
   end
-  root to: "home#index"
+  root to: "users#index"
+  match '/users/error', to: "home#index", via: 'get'
 
 
   resources :microposts

@@ -46,7 +46,15 @@ app.service('randomService', function() {
 // Service that handles students
 app.service('studentsService', ['randomService', function (randomService) {
 
-  this.students = {
+  this.setStudents = function setStudents(newStudents) {
+    if (newStudents === null) {
+      this.students = this.defaultStudents;
+    }
+    else {
+      this.students = newStudents;
+    }
+  };
+  this.defaultStudents = {
         'Riley': {
                 'name':'Riley',
                 'math':1,
@@ -102,6 +110,7 @@ app.service('studentsService', ['randomService', function (randomService) {
                 'faceIndex':1
         }
   };
+  this.students = this.defaultStudents;
 
   this.getStudent = function getStudent(studentName) {
     return this.students[studentName];
@@ -146,7 +155,7 @@ app.service('studentsService', ['randomService', function (randomService) {
 // Service that holds player variables
 app.service('playerService', [function () {
 
-  this.playerName = "Brady";
+  this.playerName = "Default";
 
 }]);
 
@@ -156,7 +165,15 @@ app.service('playerService', [function () {
 
 app.service('subjectsService', [function () {
 
-  this.subjects = {
+  this.setSubjects = function setSubjects(newSubjects) {
+    if (newSubjects === null) {
+      this.subjects = this.defaultSubjects;
+    }
+    else {
+      this.subjects = newSubjects;
+    }
+  }
+  this.defaultSubjects = {
         'math':[
           {
             'name': 'Math 1',
@@ -268,6 +285,7 @@ app.service('subjectsService', [function () {
           }
         ]
      };
+  this.subjects = this.defaultSubjects;
 
 
 }]);
@@ -384,6 +402,15 @@ app.factory('GameTimeFactory', [function() {
       return currentTurn;
     },
 
+    setTurn: function setTurn(turnVal) {
+      if (turnVal === null) {
+        currentTurn = 0;
+      }
+      else {
+        currentTurn = turnVal;
+      }
+    },
+
     incrementTurn: function incrementTurn(amt) {
       currentTurn += amt;
     },
@@ -478,7 +505,23 @@ app.factory('GameTimeFactory', [function() {
 
 
 
+app.controller('LoginCtrl', ['$scope', '$http', function($scope, $http) {
 
+    $scope.users;
+    $http.get('users.json').then(function(res) {
+      $scope.users = res.data;
+    });
+
+    $scope.testLogin = function testLogin(username) {
+      for (user in $scope.users) {
+        if ($scope.users[user].name === username) {
+          return $scope.users[user].id;
+        }
+      }
+      return 'error';
+    }
+
+  }]);
 
 
 
@@ -490,6 +533,31 @@ app.controller('ClassroomCtrl',
 
   // Debug var
   $scope.debugvar = "REMOVE ME";
+
+
+  // Set all the player variables
+  $scope.setUser = function setUser(userJson)
+  {
+    playerService.playerName = userJson.name;
+    GameTimeFactory.setTurn(userJson.turn);
+    subjectsService.setSubjects(userJson.subjects);
+    studentsService.setStudents(userJson.students);
+  }
+
+  // Get the Json string representing the user
+  $scope.getUser = function getUser() {
+    var userJson = {};
+    userJson.name = playerService.playerName;
+    userJson.turn = GameTimeFactory.getTurn();
+    userJson.subjects = subjectsService.subjects;
+    userJson.students = studentsService.students;
+    return userJson;
+  }
+
+  $scope.getTurn = function getTurn() {
+    return GameTimeFactory.getTurn();
+  }
+
 
   // Get Player's Name
   $scope.getPlayerName = function getPlayerName () {

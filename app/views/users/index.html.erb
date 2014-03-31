@@ -1,34 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="utf-8">
+  <title>SimEdu</title>
+  <!--
+  <link rel="stylesheet" href="vendor/foundation/foundation.min.css">
+  <link rel="stylesheet" href="modal.css">
+  -->
+  <%= yield %>
+
+</head>
+<body>
+  <div ng-app="myApp">
+    <div ng-controller="LoginCtrl">
+      <h2>
+        username: 
+        <input type="text" ng-model="username"><br>
+  <%= link_to 'Start Class!', '/users/{{testLogin(username)}}' %>
+      </h2>
 
 
 
 
 
-<h1>Listing users</h1>
+   </div>
+  </div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Email</th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
+</body>
+</html>
 
-  <tbody>
-    <% @users.each do |user| %>
-      <tr>
-        <td><%= user.name %></td>
-        <td><%= user.email %></td>
-        <td><%= link_to 'Show', user %></td>
-        <td><%= link_to 'Edit', edit_user_path(user) %></td>
-        <td><%= link_to 'Destroy', user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
 
-<br>
 
-<%= link_to 'New User', new_user_path %>
+<br><br>
+<%= link_to 'Create New User', new_user_path %>
