@@ -2,8 +2,12 @@
 
 one:
   name: MyString
-  email: MyString
+  turn: MyString
+  students: MyString
+  subjects: MyString
 
 two:
   name: MyString
-  email: MyString
+  turn: MyString
+  students: MyString
+  subjects: MyString

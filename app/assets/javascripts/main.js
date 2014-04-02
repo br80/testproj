@@ -51,64 +51,64 @@ app.service('studentsService', ['randomService', function (randomService) {
       this.students = this.defaultStudents;
     }
     else {
-      this.students = newStudents;
+      this.students = this.defaultStudents;//angular.fromJson(newStudents);
     }
   };
   this.defaultStudents = {
-        'Riley': {
-                'name':'Riley',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        },
-        'Kelly': {
-                'name':'Kelly',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        },
-        'Alex': {
-                'name':'Alex',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        },
-        'Taylor': {
-                'name':'Taylor',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        },
-        'Morgan': {
-                'name':'Morgan',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        },
-        'Jesse': {
-                'name':'Jesse',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        }
+        'Riley': [
+                'Riley',    // Name
+                1,          // Math
+                1,          // Reading
+                1,          // Writing
+                1,          // Discipline
+                'Neutral',  // Face
+                1           // FaceIndex
+        ],
+        'Kelly': [
+                'Kelly',    // Name
+                1,          // Math
+                1,          // Reading
+                1,          // Writing
+                1,          // Discipline
+                'Neutral',  // Face
+                1           // FaceIndex
+        ],
+        'Alex': [
+                'Alex',    // Name
+                1,          // Math
+                1,          // Reading
+                1,          // Writing
+                1,          // Discipline
+                'Neutral',  // Face
+                1           // FaceIndex
+        ],
+        'Taylor': [
+                'Taylor',    // Name
+                1,          // Math
+                1,          // Reading
+                1,          // Writing
+                1,          // Discipline
+                'Neutral',  // Face
+                1           // FaceIndex
+        ],
+        'Morgan': [
+                'Morgan',   // Name
+                1,          // Math
+                1,          // Reading
+                1,          // Writing
+                1,          // Discipline
+                'Neutral',  // Face
+                1           // FaceIndex
+        ],
+        'Jesse': [
+                'Jesse',    // Name
+                1,          // Math
+                1,          // Reading
+                1,          // Writing
+                1,          // Discipline
+                'Neutral',  // Face
+                1           // FaceIndex
+        ]
   };
   this.students = this.defaultStudents;
 
@@ -119,11 +119,11 @@ app.service('studentsService', ['randomService', function (randomService) {
   this.studentTooltip = function studentTooltip(studentName) {
     var student = this.getStudent(studentName);
     var retArray = [];
-    retArray.push(student.name);
-    retArray.push('Math: ' + student.math);
-    retArray.push('Reading: ' + student.reading);
-    retArray.push('Writing: ' + student.writing);
-    retArray.push('Discipline: ' + student.discipline);
+    retArray.push(student[1]);
+    retArray.push('Math: ' + student[2]);
+    retArray.push('Reading: ' + student[3]);
+    retArray.push('Writing: ' + student[4]);
+    retArray.push('Discipline: ' + student[5]);
     return retArray.join("\n");
   };
 
@@ -534,20 +534,42 @@ app.controller('ClassroomCtrl',
 
   // Debug var
   $scope.debugvar = "REMOVE ME";
+//  $scope.debugvar = {"name":"Brady", "turn":4, "students":"{}", "subjects":"{}"};
 
+  // Index Macros
+  $scope.studentName = 0;
+  $scope.studentMath = 1;
+  $scope.studentReading = 2;
+  $scope.studentWriting = 3;
+  $scope.studentDiscipline = 4;
+  $scope.studentFace = 5;
+  $scope.studentFaceIndex = 6;
+
+
+
+
+
+ 
   $scope.initialized = false;
   // Set all the player variables
-  $scope.setUser = function setUser(userJson)
+  $scope.setUser = function setUser(userJsonString)
   {
+    console.log("HERE: " + userJsonString);
+    console.log(angular.fromJson(userJsonString));
+    console.log("HEREX");
+    $debugvar = userJsonString;
     if(!$scope.initialized) {
+      var userJson = angular.fromJson(userJsonString);
       playerService.playerName = userJson.name;
       playerService.playerId = userJson.id;
       GameTimeFactory.setTurn(userJson.turn);
-      subjectsService.setSubjects(userJson.subjects);
-      studentsService.setStudents(userJson.students);
+      subjectsService.setSubjects(angular.fromJson(userJson.subjects));
+      studentsService.setStudents(angular.fromJson(userJson.students));
       $scope.initialized = true;
     }
   }
+
+
 
   // Get the Json string representing the user
   $scope.getUser = function getUser() {
@@ -556,7 +578,7 @@ app.controller('ClassroomCtrl',
     userJson.id = playerService.playerId;
     userJson.turn = GameTimeFactory.getTurn();
     userJson.subjects = subjectsService.subjects;
-    userJson.students = studentsService.students;
+    userJson.students = angular.fromJson(studentsService.students);
     return userJson;
   }
 
@@ -661,7 +683,6 @@ app.controller('ClassroomCtrl',
   // Take the first turn and trigger the callback to take more turns
   $scope.takeTurn = function takeTurn() {
     var classTimeRemaining = GameTimeFactory.getClassTimeRemaining();
-      $scope.debugvar =GameTimeFactory.getClassTimeAmount();;
     if (!$scope.turnActive) {
       // Start the action
       $scope.numberOfTurnsToTake = GameTimeFactory.getNumberOfTurns();

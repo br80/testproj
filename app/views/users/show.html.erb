@@ -21,9 +21,13 @@
    <div ng-controller="ClassroomCtrl">
 
    <!--Set user variables-->
-   {{setUser(<%= @user.to_json %>)}}
-   <%= @user.to_json %>
+   {{setUser('<%= @user.to_json %>')}}
+<!--
+     {{setUser('<%= @user.students %>')}}
 
+   <br><br>
+   <%= @user.to_json %>
+-->
    <!--Name of the class-->
    <h1>{{getPlayerName()}}'s Class</h1>
    
@@ -70,12 +74,12 @@
    <table>
    <tr>
       <td ng-repeat="student in getStudents()">
-         <h3 ng-click="toggleModal(student.name)">{{student.name}}</h3>
-         <img alt="Rails" ng-src="/assets/Face_{{student.face}}_{{student.faceIndex}}.jpg" title="{{studentTooltip(student.name)}}" ng-click="handlePortraitClick(student.name)"></img>
-         <br></br>Math: {{student.math}}
-         <br></br>Reading: {{student.reading}}
-         <br></br>Writing: {{student.writing}}
-         <br></br>Discipline: {{student.discipline}}
+         <h3 ng-click="toggleModal(student[studentName])">{{student[studentName]}}</h3>
+         <img alt="Rails" ng-src="/assets/Face_{{student[studentFace]}}_{{student[studentFaceIndex]}}.jpg" title="{{studentTooltip(student[studentName])}}" ng-click="handlePortraitClick(student[studentName])"></img>
+         <br></br>Math: {{student[studentMath]}}
+         <br></br>Reading: {{student[studentReading]}}
+         <br></br>Writing: {{student[studentWriting]}}
+         <br></br>Discipline: {{student[studentDiscipline]}}
       </td>
    </tr>
    </table>
@@ -84,9 +88,13 @@
 
 
 
-<!--
 <h1>REMOVE ME: {{debugvar}}</h1>
--->
+
+
+
+
+
+
 <%= form_for(@user) do |f| %>
   <% if @user.errors.any? %>
     <div id="error_explanation">
@@ -106,11 +114,7 @@
   </div>
   <div class="field">
     <label for="user_turn">Turn</label><br>
-    <input id="user_turn" name="user[turn]" type="text" value="{{getTurn()+1}}"/>
-  </div>
-  <div class="field">
-    <label for="user_email">Email</label><br>
-    <input id="user_email" name="user[email]" type="text" value=""/>
+    <input id="user_turn" name="user[turn]" type="text" value="{{getTurn()}}"/>
   </div>
   <div class="field">
     <label for="user_students">Students</label><br>
@@ -144,10 +148,6 @@
   <%= @user.name %>
 </p>
 
-<p>
-  <strong>Email:</strong>
-  <%= @user.email %>
-</p>
 
 <%= link_to 'Edit', edit_user_path(@user) %> |
 <%= link_to 'Back', users_path %>
