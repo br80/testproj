@@ -9,4 +9,9 @@ FactoryGirl.define do
       admin true
     end
   end
+
+  factory :student do
+    name "Tester"
+    user
+  end
 end

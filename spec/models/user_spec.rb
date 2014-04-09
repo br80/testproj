@@ -127,5 +127,26 @@ describe User do
     its(:remember_token) { should_not be_blank }
   end
 
+  describe "student associations" do
+
+    before { @user.save }
+
+    it "should have 6 named students upon creation" do
+      students = @user.students.to_a
+      expect(students.count).to eq 6
+      students.each do |student|
+        expect(student.name).not_to be_empty
+      end
+    end
+
+    it "should destroy associated students" do
+      students = @user.students.to_a
+      @user.destroy
+      expect(students).not_to be_empty
+      students.each do |student|
+        expect(Student.where(id: student.id)).to be_empty
+      end
+    end
+  end
 
 end
