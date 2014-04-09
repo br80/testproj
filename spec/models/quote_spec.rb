@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Quote do
 
-  before { @quote = Quote.create(content: "Beware of bugs in the above code; I have only proved it correct, not tried it.", author: "Donald Knuth") }
+  before { @quote = Quote.create(content: "Lorem Ipsum.", author: "John Doe") }
 
   subject { @quote }
 

@@ -1,6 +1,7 @@
 <% provide(:title, @user.name) %>
+
 <div class="row">
-  <aside class="span4">
+  <aside class="col-md-4">
     <section>
       <h1>
         <%= gravatar_for @user %>
@@ -9,3 +10,76 @@
     </section>
   </aside>
 </div>
+
+<body>
+
+  <div ng-app="myApp">
+   <div ng-controller="ClassroomCtrl">
+
+   <!--Set user variables-->
+   {{setUser(<%= @user.to_json %>)}}
+
+   <!--Name of the class-->
+   <h1>{{getPlayerName()}}'s Class</h1>
+   
+   <hr></hr>
+   <!--Display the time-->
+   <h2>Day {{getDay()}}</h2>
+   <h3>{{getTime()}}</h3>
+   <hr></hr>
+
+   <!--
+      ACTIONS
+   ->
+   <!Select the subject-->
+   <table>
+      <tr ng-repeat="subject in getSubjects()">
+         <td ng-repeat="section in subject">
+            <input type="radio" ng-model="$parent.$parent.currentSubject" name="subjectGrouping" ng-value="section" ng-disabled="!section.active">{{section.name}}</input>
+         </td>
+      </tr>
+   </table>
+
+   <br></br>
+   <!--Select the action-->
+   <input type="radio" ng-model="currentAction" value="lecture" ng-change="selectActionButton(currentAction)" ng-disabled="turnActive"> Lecture</br>
+   <input type="radio" ng-model="currentAction" value="classwork" ng-change="selectActionButton(currentAction)" ng-disabled="turnActive"> Classwork</br>
+   <div ng-show="isThereTimeForExam()"><input type="radio" ng-model="currentAction" value="exam" ng-change="selectActionButton(currentAction)" ng-disabled="turnActive"> Exam</input></div>
+   <div ng-show="!isThereTimeForExam()"><input type="radio" ng-model="currentAction" value="no-exam" ng-disabled="true"> Exam (not enough time)</input></div>
+
+   <!--Time of action-->
+   <div >
+      <div></div>
+      <span>
+         Time: 
+         <select ng-model="classTimeAmountString" ng-change="setClassTimeAmountByString(classTimeAmountString)" ng-options="time for time in getClassTimeStringsRemaining()" ng-disabled=(turnActive||currentAction=='exam')>
+         </select>
+      </span>
+   </div>
+
+   <!--Make action button-->
+   <button ng-click="takeTurn()" >{{getActionVerb()}}</button>
+   <hr></hr>
+   
+   <!--Make table containing student portraits-->
+   <table>
+   <tr>
+      <td ng-repeat="student in getStudents()">
+         <h3 ng-click="toggleModal(student.name)">{{student.name}}</h3>
+         <img alt="Rails" ng-src="/assets/Face_{{student.face}}_{{student.faceIndex}}.jpg" title="{{studentTooltip(student.name)}}" ng-click="handlePortraitClick(student.name)"></img>
+         <br></br>Math: {{student.math}}
+         <br></br>Reading: {{student.reading}}
+         <br></br>Writing: {{student.writing}}
+         <br></br>Discipline: {{student.discipline}}
+      </td>
+   </tr>
+   </table>
+   <br></br>
+   <font size="3" color="red" ng-show="turnActive">(If you catch students goofing off, click their portraits to get them back on task!)</font>
+
+
+
+   </div>
+  </div>
+
+</body>

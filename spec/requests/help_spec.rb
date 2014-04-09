@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe "Help page" do
 
-
   subject { page }
 
   describe "Help page" do
@@ -18,7 +17,7 @@ describe "Help page" do
       it { should have_content('Donald Knuth') }
     end
 
-    describe "should pull use quote from database if is database is not empty" do
+    describe "should use quote from database if is database is not empty" do
       before { @quote = Quote.create(content: 'Lorem Ipsum.', author: 'John Doe') }
       before { visit help_path }
 
