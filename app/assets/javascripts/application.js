@@ -16,5 +16,5 @@
 //= require turbolinks
 //= require ./angular/angular.js
 //= require ./angular/angular-mocks.js
-//= require ./angular/angular-resource
+//= require ./angular/angular-resource.js
 //= require main.js

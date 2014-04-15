@@ -17,7 +17,7 @@
    <div ng-controller="ClassroomCtrl">
 
    <!--Set user variables-->
-   {{setUser(<%= @user.to_json %>)}}
+   {{setUser(<%= @user.id %>, '<%= @user.name %>', <%= @user.turn %>, <%= @user.students.to_json %>)}}
 
    <!--Name of the class-->
    <h1>{{getPlayerName()}}'s Class</h1>
@@ -27,6 +27,7 @@
    <h2>Day {{getDay()}}</h2>
    <h3>{{getTime()}}</h3>
    <hr></hr>
+
 
    <!--
       ACTIONS
@@ -67,10 +68,10 @@
       <td ng-repeat="student in getStudents()">
          <h3 ng-click="toggleModal(student.name)">{{student.name}}</h3>
          <img alt="Rails" ng-src="/assets/Face_{{student.face}}_{{student.faceIndex}}.jpg" title="{{studentTooltip(student.name)}}" ng-click="handlePortraitClick(student.name)"></img>
-         <br></br>Math: {{student.math}}
-         <br></br>Reading: {{student.reading}}
-         <br></br>Writing: {{student.writing}}
-         <br></br>Discipline: {{student.discipline}}
+         <br><br>Math: {{student.math}}
+         <br><br>Reading: {{student.reading}}
+         <br><br>Writing: {{student.writing}}
+         <br><br>Discipline: {{student.discipline}}
       </td>
    </tr>
    </table>

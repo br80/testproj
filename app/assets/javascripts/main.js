@@ -46,71 +46,14 @@ app.service('randomService', function() {
 // Service that handles students
 app.service('studentsService', ['randomService', function (randomService) {
 
-  this.setStudents = function setStudents(newStudents) {
-    if (newStudents === null) {
-      this.students = this.defaultStudents;
-    }
-    else {
-      this.students = newStudents;
-    }
-  };
-  this.defaultStudents = {
-        'Riley': {
-                'name':'Riley',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        },
-        'Kelly': {
-                'name':'Kelly',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        },
-        'Alex': {
-                'name':'Alex',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        },
-        'Taylor': {
-                'name':'Taylor',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        },
-        'Morgan': {
-                'name':'Morgan',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        },
-        'Jesse': {
-                'name':'Jesse',
-                'math':1,
-                'reading':1,
-                'writing':1,
-                'discipline':1,
-                'face': 'Neutral',
-                'faceIndex':1
-        }
-  };
-  this.students = this.defaultStudents;
+  this.students = {};
+
+  this.addStudent = function addStudent(student) {
+    student.faceIndex = 1;
+    student.face = "Neutral";
+    this.students[student.name] = student;
+    return student;
+  }
 
   this.getStudent = function getStudent(studentName) {
     return this.students[studentName];
@@ -166,15 +109,7 @@ app.service('playerService', [function () {
 
 app.service('subjectsService', [function () {
 
-  this.setSubjects = function setSubjects(newSubjects) {
-    if (newSubjects === null) {
-      this.subjects = this.defaultSubjects;
-    }
-    else {
-      this.subjects = newSubjects;
-    }
-  }
-  this.defaultSubjects = {
+  this.subjects = {
         'math':[
           {
             'name': 'Math 1',
@@ -286,7 +221,6 @@ app.service('subjectsService', [function () {
           }
         ]
      };
-  this.subjects = this.defaultSubjects;
 
 
 }]);
@@ -537,17 +471,29 @@ app.controller('ClassroomCtrl',
 
   $scope.initialized = false;
   // Set all the player variables
-  $scope.setUser = function setUser(userJson)
-  {
+  $scope.setUser = function setUser(userId, userName, userTurn, studentsArray) {
     if(!$scope.initialized) {
-      playerService.playerName = userJson.name;
-      playerService.playerId = userJson.id;
-      GameTimeFactory.setTurn(userJson.turn);
-//      subjectsService.setSubjects(userJson.subjects);
-//      studentsService.setStudents(userJson.students);
+      playerService.playerName = userName;
+      playerService.playerId = userId;
+      GameTimeFactory.setTurn(userTurn);
+      $scope.setStudents(studentsArray);
       $scope.initialized = true;
     }
   }
+
+  $scope.setStudents = function setStudents(studentsArray) {
+    for (student in studentsArray) {
+      studentsService.addStudent(studentsArray[student]);
+    }
+  }
+
+//  $scope.setStudents = function setStudents(studentsArray) {
+//    $scope.debugvar += studentsArray.length
+    //for (student in studentsArray) {
+      //studentsService.addStudent(studentsArray[student]);
+    //  $scope.debugvar += studentsArray[student];
+    //}
+//  }
 
   // Get the Json string representing the user
   $scope.getUser = function getUser() {
@@ -577,6 +523,7 @@ app.controller('ClassroomCtrl',
   $scope.getSubjects = function getSubjects () {
     return subjectsService.subjects;
   }
+  $scope.theSubjects = $scope.getSubjects();
 
   // Get students dictionary
   $scope.getStudents = function getStudents () {

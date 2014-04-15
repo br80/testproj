@@ -1,6 +1,7 @@
 class User < ActiveRecord::Base
   has_many :students, dependent: :destroy
   before_save { self.email = email.downcase }
+  before_save { self.turn = 0 }
   before_create :create_remember_token
   after_create :create_students
   validates :name, presence: true, length: { maximum: 50 }

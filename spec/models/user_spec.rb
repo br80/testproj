@@ -40,8 +40,6 @@ describe User do
     it { should_not be_valid }
   end
 
-
-
   describe "when email is not present" do
     before { @user.email = " " }
     it { should_not be_valid }
@@ -127,15 +125,30 @@ describe User do
     its(:remember_token) { should_not be_blank }
   end
 
+  describe "turn initialization" do
+    before { @user.save }
+    it "should initialize turn to zero (not null)" do
+      expect(@user.turn).to eq 0
+    end
+  end
+
   describe "student associations" do
 
     before { @user.save }
 
-    it "should have 6 named students upon creation" do
+    it "should have 6 initialized students upon creation" do
       students = @user.students.to_a
       expect(students.count).to eq 6
       students.each do |student|
         expect(student.name).not_to be_empty
+        expect(student.math).to be > 0
+        expect(student.math).to be < 6
+        expect(student.reading).to be > 0
+        expect(student.reading).to be < 6
+        expect(student.writing).to be > 0
+        expect(student.writing).to be < 6
+        expect(student.discipline).to be > 0
+        expect(student.discipline).to be < 6
       end
     end
 
