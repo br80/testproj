@@ -365,7 +365,6 @@ app.factory('GameTimeFactory', [function() {
       return Math.floor(currentTurn / 36 + 1);
     },
 
-    getClassTimeAmount: function getClassTimeAmount() {return classTimeAmount;},
     getClassTimeRemaining: function getClassTimeRemaining() {return classTimeRemaining;},
 
 
@@ -487,14 +486,6 @@ app.controller('ClassroomCtrl',
     }
   }
 
-//  $scope.setStudents = function setStudents(studentsArray) {
-//    $scope.debugvar += studentsArray.length
-    //for (student in studentsArray) {
-      //studentsService.addStudent(studentsArray[student]);
-    //  $scope.debugvar += studentsArray[student];
-    //}
-//  }
-
   // Get the Json string representing the user
   $scope.getUser = function getUser() {
     var userJson = {};
@@ -563,9 +554,11 @@ app.controller('ClassroomCtrl',
 
   $scope.setClassTimeAmount = function setClassTimeAmount(amt) {
     $scope.classTimeAmount = GameTimeFactory.setClassTimeAmount(amt);
+    $scope.classTimeAmountString = $scope.classTimeAmount.toString;
   }
   $scope.setClassTimeAmountByString = function setClassTimeAmountByString(amtString) {
     $scope.classTimeAmount = GameTimeFactory.setClassTimeAmountByString(amtString);
+    $scope.classTimeAmountString = $scope.classTimeAmount.toString;
   }
   $scope.getClassTimeStringsRemaining = function getClassTimeStringsRemaining() {
     var classTimeStrings = [];
